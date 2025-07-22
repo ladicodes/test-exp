@@ -33,7 +33,15 @@ app.get("/health", (req, res) => {
 });
 
 // API routes
-app.use("/api", routes);
+app.use("/", routes);
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    statusCode: 404,
+    message: `Route ${req.originalUrl} not found`,
+  });
+});
 
 // Global error handler (must be last)
 app.use(errorMiddleware);
