@@ -20,7 +20,7 @@ app.use(compression());
 
 // Logging
 app.use(
-  morgan("combined", {
+  morgan("short", {
     stream: { write: (message) => logger.info(message.trim()) },
   })
 );
