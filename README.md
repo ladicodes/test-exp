@@ -1,1 +1,1 @@
-# squadco-hackademy-backend
+# SquadCo Hackademy Portal
