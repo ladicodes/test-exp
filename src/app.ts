@@ -5,7 +5,9 @@ import compression from "compression";
 import morgan from "morgan";
 import logger from "./utils/logger";
 import { errorMiddleware } from "./middleware/error.middleware";
+import swaggerUi from "swagger-ui-express";
 import routes from "./routes";
+import swaggerDocument from "../swagger.json";
 
 const app = express();
 
@@ -29,8 +31,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API routes
 app.use("/", routes);
