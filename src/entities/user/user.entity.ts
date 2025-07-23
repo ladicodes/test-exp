@@ -1,6 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from "typeorm";
 
-enum UserRole {
+export enum UserRole {
   ADMIN = "admin",
   USER = "user",
   INSTRUCTOR = "instructor",
@@ -35,4 +42,13 @@ export class User {
 
   @Column()
   password: string;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

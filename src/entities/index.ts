@@ -1,3 +1,3 @@
-import { User } from "./user.entity";
+import { User } from "./user/user.entity";
 
 export default [User];
