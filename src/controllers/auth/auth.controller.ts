@@ -5,6 +5,7 @@ import { User } from "../../entities/user/user.entity";
 import { CreateUserDTO } from "../../entities/user/dto/create-user.entity";
 import { ResponseUtil } from "../../utils/response";
 import { Otp } from "../../entities/auth/otp.entity";
+import { VerifyOtpDTO } from "./dto/auth.dto";
 
 export class AuthController {
   public readonly authService: AuthService;
@@ -26,6 +27,26 @@ export class AuthController {
       return ResponseUtil.error(
         res,
         error.message || "Registration failed",
+        401,
+        error
+      );
+    }
+  }
+
+  async verifyOtp(req: Request, res: Response): Promise<Response> {
+    const data: VerifyOtpDTO = req.body;
+    const { email, otp } = data;
+
+    try {
+      const isValidOtp = await this.authService.verifyOtp(email, otp);
+      if (!isValidOtp) {
+        return ResponseUtil.error(res, "Invalid OTP", 400);
+      }
+      return ResponseUtil.success(res, null, "OTP verified successfully");
+    } catch (error: any) {
+      return ResponseUtil.error(
+        res,
+        error.message || "OTP verification failed",
         500,
         error
       );

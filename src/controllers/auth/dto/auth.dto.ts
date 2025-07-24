@@ -27,3 +27,13 @@ export class ResetPasswordDTO {
   @IsString()
   token: string;
 }
+
+export class VerifyOtpDTO {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(6)
+  @MaxLength(6)
+  otp: string;
+}

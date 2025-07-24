@@ -5,6 +5,7 @@ import { AuthController } from "../../../controllers/auth/auth.controller";
 import { validateBody } from "../../../middleware/validate.middleware";
 import { CreateUserDTO } from "../../../entities/user/dto/create-user.entity";
 import { Otp } from "../../../entities/auth/otp.entity";
+import { VerifyOtpDTO } from "../../../controllers/auth/dto/auth.dto";
 
 const [userRepository, otpRepository] = [
   AppDataSource.getRepository(User),
@@ -18,6 +19,12 @@ router.post(
   "/register",
   validateBody(CreateUserDTO),
   authController.register.bind(authController)
+);
+
+router.post(
+  "/verify-otp",
+  validateBody(VerifyOtpDTO),
+  authController.verifyOtp.bind(authController)
 );
 
 // router.post(

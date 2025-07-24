@@ -35,6 +35,29 @@ export class AuthService {
     return this.userRepository.save(newUser);
   }
 
+  async verifyOtp(email: string, otp: string): Promise<boolean> {
+    const otpRecord = await this.otpRepository.findOne({
+      where: { email, otp },
+    });
+
+    if (!otpRecord) throw new Error("Invalid OTP");
+
+    await this.otpRepository.delete(otpRecord.id);
+
+    const user = await this.userRepository.findOneBy({ email });
+    if (!user) throw new Error("User not found");
+
+    user.isVerified = true;
+    await this.userRepository.save(user);
+
+    await emailService.sendWelcomeEmail(email, {
+      name: user.firstName,
+      email: user.email,
+    });
+
+    return true;
+  }
+
   async login(email: string, password: string) {}
 
   async logout(userId: string) {}
