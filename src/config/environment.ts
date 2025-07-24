@@ -18,6 +18,13 @@ const envSchema = Joi.object({
   DATABASE_PASSWORD: Joi.string().default("your_password"),
   DATABASE_NAME: Joi.string().default("your_db"),
   DATABASE_SYNCHRONIZE: Joi.boolean().default(true),
+
+  // email
+  EMAIL_HOST: Joi.string().default("smtp.gmail.com"),
+  EMAIL_PORT: Joi.number().default(587),
+  EMAIL_SECURE: Joi.boolean().default(false),
+  EMAIL_USER: Joi.string().email().required(),
+  EMAIL_PASS: Joi.string().required(),
 }).unknown();
 
 const { error, value } = envSchema.validate(process.env);
@@ -40,5 +47,12 @@ export const config = {
   jwt: {
     secret: value.JWT_SECRET,
     expiresIn: value.JWT_EXPIRES_IN,
+  },
+  email: {
+    host: value.EMAIL_HOST,
+    port: value.EMAIL_PORT,
+    secure: Boolean(value.EMAIL_SECURE),
+    user: value.EMAIL_USER,
+    pass: value.EMAIL_PASS,
   },
 } as const;

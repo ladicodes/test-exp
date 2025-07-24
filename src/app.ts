@@ -14,7 +14,11 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // Performance middleware
 app.use(compression());
@@ -27,7 +31,7 @@ app.use(
 );
 
 // Body parsing
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Health check

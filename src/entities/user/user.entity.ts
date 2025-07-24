@@ -24,7 +24,7 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
   @Column({ unique: true })
@@ -39,6 +39,27 @@ export class User {
 
   @Column({ unique: true })
   email: string;
+
+  @Column()
+  school: string;
+
+  @Column({ nullable: true })
+  profilePicture?: string;
+
+  @Column({ nullable: true })
+  bio?: string;
+
+  @Column({ nullable: true })
+  github?: string;
+
+  @Column({ nullable: true })
+  linkedin?: string;
+
+  @Column({ nullable: true })
+  twitter?: string;
+
+  @Column({ nullable: true })
+  website?: string;
 
   @Column()
   password: string;

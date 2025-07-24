@@ -1,5 +1,6 @@
 import app from "./app";
 import { config } from "./config/environment";
+import { emailService } from "./services/email.service";
 import { AppDataSource } from "./utils/data-source";
 import logger from "./utils/logger";
 
@@ -7,6 +8,14 @@ const startServer = async () => {
   try {
     await AppDataSource.initialize();
     logger.info("Database connection established");
+
+    await emailService
+      .verifyConnection()
+      .then((isConnected) =>
+        isConnected
+          ? logger.info("Email service connected successfully")
+          : logger.error("Failed to connect to email service")
+      );
 
     const server = app.listen(config.port, () => {
       logger.info(
