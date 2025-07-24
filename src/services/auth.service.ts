@@ -4,6 +4,7 @@ import { User } from "../entities/user/user.entity";
 import bcrypt from "bcryptjs";
 import { emailService, EmailService } from "./email.service";
 import { Otp } from "../entities/auth/otp.entity";
+import { format } from "date-fns";
 
 export class AuthService {
   private readonly userRepository: Repository<User>;
@@ -48,9 +49,10 @@ export class AuthService {
         email: body.email,
         otp,
         // 24 hours expiration time
-        expirationTime: new Date(
-          Date.now() + 24 * 60 * 60 * 1000
-        ).toLocaleDateString(),
+        expirationTime: format(
+          new Date(Date.now() + 24 * 60 * 60 * 1000),
+          "yyyy-MM-dd HH:mm:ss"
+        ),
       })
       .then(async () => {
         await this.otpRepository.save({ email: body.email, otp });

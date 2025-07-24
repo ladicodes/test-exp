@@ -61,6 +61,12 @@ export class User {
   @Column({ nullable: true })
   website?: string;
 
+  @Column({ nullable: true })
+  dateOfBirth?: Date;
+
+  @Column({ default: false })
+  isVerified: boolean;
+
   @Column()
   password: string;
 
