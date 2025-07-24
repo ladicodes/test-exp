@@ -12,6 +12,9 @@ export const dataSourceOptions: DataSourceOptions = {
   synchronize: config.database.synchronize,
   // logging: true,
   entities,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 };
 
 export const AppDataSource = new DataSource(dataSourceOptions);

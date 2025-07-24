@@ -4,8 +4,6 @@ import { emailService } from "./services/email.service";
 import { AppDataSource } from "./utils/data-source";
 import logger from "./utils/logger";
 
-console.log({ config });
-
 const startServer = async () => {
   try {
     await AppDataSource.initialize();
