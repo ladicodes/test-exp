@@ -39,9 +39,8 @@ export class AuthController {
 
     try {
       const isValidOtp = await this.authService.verifyOtp(email, otp);
-      if (!isValidOtp) {
-        return ResponseUtil.error(res, "Invalid OTP", 400);
-      }
+      if (!isValidOtp) return ResponseUtil.error(res, "Invalid OTP", 400);
+
       return ResponseUtil.success(res, null, "OTP verified successfully");
     } catch (error: any) {
       return ResponseUtil.error(
