@@ -3,13 +3,15 @@ import Joi from "joi";
 
 dotenv.config();
 
+console.log({ port: process.env.PORT });
+
 const envSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid("development", "production", "test")
     .default("development"),
-  PORT: Joi.number()
-    .positive()
-    .default(Number(process.env.PORT) || 9000),
+  PORT: Joi.number().positive().required(),
+
+  // jwt
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRES_IN: Joi.string().default("7d"),
 
