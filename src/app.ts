@@ -14,11 +14,7 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
-// app.use(
-//   cors({
-//     origin: "*",
-//   })
-// );
+app.use(cors());
 
 // Performance middleware
 app.use(compression());
