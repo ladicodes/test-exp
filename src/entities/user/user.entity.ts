@@ -13,7 +13,7 @@ export enum UserRole {
   INSTRUCTOR = "instructor",
 }
 
-@Entity({ name: "users" })
+@Entity({ name: "user" })
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
