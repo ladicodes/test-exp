@@ -14,11 +14,11 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+// app.use(
+//   cors({
+//     origin: "*",
+//   })
+// );
 
 // Performance middleware
 app.use(compression());
