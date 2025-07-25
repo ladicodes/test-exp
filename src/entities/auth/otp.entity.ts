@@ -18,6 +18,9 @@ export class Otp {
   @Column()
   otp: string;
 
+  @Column()
+  expiresAt: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 

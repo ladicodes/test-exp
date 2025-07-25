@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import { CreateUserDTO } from "../entities/user/dto/create-user.entity";
 import { User } from "../entities/user/user.entity";
 import bcrypt from "bcryptjs";
-import { emailService, EmailService } from "./email.service";
+import { emailService } from "./email.service";
 import { Otp } from "../entities/auth/otp.entity";
 import { format } from "date-fns";
 
@@ -65,6 +65,7 @@ export class AuthService {
   async sendOtpEmail(body: CreateUserDTO) {
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await emailService
       .sendEmailConfirmation(body.email, {
@@ -72,13 +73,10 @@ export class AuthService {
         email: body.email,
         otp,
         // 24 hours expiration time
-        expirationTime: format(
-          new Date(Date.now() + 24 * 60 * 60 * 1000),
-          "yyyy-MM-dd HH:mm:ss"
-        ),
+        expirationTime: format(expiresAt, "yyyy-MM-dd HH:mm:ss"),
       })
       .then(async () => {
-        await this.otpRepository.save({ email: body.email, otp });
+        await this.otpRepository.save({ email: body.email, otp, expiresAt });
       });
 
     return otp;
