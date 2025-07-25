@@ -6,7 +6,7 @@ dotenv.config();
 const envSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid("development", "production", "test")
-    .default("development"),
+    .default(process.env.NODE_ENV || "development"),
   PORT: Joi.number().positive().required(),
 
   // jwt

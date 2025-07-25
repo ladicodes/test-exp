@@ -14,7 +14,14 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://squadco-hackademy-frontend.vercel.app/",
+    ],
+  })
+);
 
 // Performance middleware
 app.use(compression());
