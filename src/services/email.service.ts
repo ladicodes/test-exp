@@ -191,13 +191,13 @@ export class EmailService {
    */
   async sendPasswordResetEmail(
     to: string,
-    resetData: { name: string; resetToken: string; resetUrl: string }
+    data: { otp: string; name: string }
   ): Promise<EmailResult> {
     return this.sendEmail({
       to,
       subject: "Password Reset Request",
       template: "password-reset",
-      data: resetData,
+      data,
     });
   }
 

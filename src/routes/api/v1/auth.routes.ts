@@ -6,7 +6,9 @@ import { validateBody } from "../../../middleware/validate.middleware";
 import { CreateUserDTO } from "../../../entities/user/dto/create-user.entity";
 import { Otp } from "../../../entities/auth/otp.entity";
 import {
+  ForgotPasswordDTO,
   LoginUserDTO,
+  ResetPasswordDTO,
   VerifyOtpDTO,
 } from "../../../controllers/auth/dto/auth.dto";
 
@@ -34,6 +36,18 @@ router.post(
   "/login",
   validateBody(LoginUserDTO),
   authController.login.bind(authController)
+);
+
+router.post(
+  "/forgot-password",
+  validateBody(ForgotPasswordDTO),
+  authController.forgotPassword.bind(authController)
+);
+
+router.post(
+  "/reset-password",
+  validateBody(ResetPasswordDTO),
+  authController.resetPassword.bind(authController)
 );
 
 export default router;

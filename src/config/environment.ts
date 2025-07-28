@@ -29,6 +29,9 @@ const envSchema = Joi.object({
   EMAIL_SECURE: Joi.boolean().default(false),
   EMAIL_USER: Joi.string().email().required(),
   EMAIL_PASS: Joi.string().required(),
+
+  // frontend
+  FRONTEND_URL: Joi.string().uri().default("http://localhost:3000"),
 }).unknown();
 
 const { error, value } = envSchema.validate(process.env);
@@ -60,5 +63,8 @@ export const config = {
     secure: Boolean(value.EMAIL_SECURE),
     user: value.EMAIL_USER,
     pass: value.EMAIL_PASS,
+  },
+  frontend: {
+    url: value.FRONTEND_URL,
   },
 } as const;

@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 import { Request } from "express";
 import { config } from "../config";
 import ms from "ms";
+import { ResetPasswordDTO } from "../controllers/auth/dto/auth.dto";
 
 export class AuthService {
   private readonly userRepository: Repository<User>;
@@ -39,7 +40,11 @@ export class AuthService {
     return this.userRepository.save(newUser);
   }
 
-  async verifyOtp(email: string, otp: string): Promise<boolean> {
+  async verifyOtp(
+    email: string,
+    otp: string,
+    isOther = false
+  ): Promise<boolean> {
     const otpRecord = await this.otpRepository.findOne({
       where: { email, otp },
     });
@@ -48,16 +53,18 @@ export class AuthService {
 
     await this.otpRepository.delete(otpRecord.id);
 
-    const user = await this.userRepository.findOneBy({ email });
-    if (!user) throw new Error("User not found");
+    if (!isOther) {
+      const user = await this.userRepository.findOneBy({ email });
+      if (!user) throw new Error("User not found");
 
-    user.isVerified = true;
-    await this.userRepository.save(user);
+      user.isVerified = true;
+      await this.userRepository.save(user);
 
-    await emailService.sendWelcomeEmail(email, {
-      name: user.firstName,
-      email: user.email,
-    });
+      await emailService.sendWelcomeEmail(email, {
+        name: user.firstName,
+        email: user.email,
+      });
+    }
 
     return true;
   }
@@ -108,8 +115,8 @@ export class AuthService {
         tokens: {
           accessToken,
           refreshToken,
+          expiresIn: Date.now() + ms(config.jwt.expiresIn),
         },
-        expiresIn: Date.now() + ms(config.jwt.expiresIn),
       },
     };
   }
@@ -118,9 +125,56 @@ export class AuthService {
 
   async refreshToken(req: Request) {}
 
+  async forgotPassword(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (!user) throw new Error("User not found");
+
+    const otp = this.generateOtp(6);
+    const expiresAt = new Date(ms("24h"));
+
+    await emailService
+      .sendPasswordResetEmail(email, {
+        name: user.firstName,
+        otp,
+      })
+      .then(async () => {
+        await this.otpRepository.save({ email, otp, expiresAt });
+      });
+
+    return otp;
+  }
+
+  async resetPassword(
+    body: ResetPasswordDTO
+  ): Promise<{ error?: string; data?: string }> {
+    const { email, otp, newPassword } = body;
+
+    // const otpRecord = await this.otpRepository.findOne({
+    //   where: { email, otp },
+    // });
+
+    // if (!otpRecord) return { error: "Invalid OTP" };
+
+    // if (new Date() > otpRecord.expiresAt) {
+    //   await this.otpRepository.delete(otpRecord.id);
+    //   return { error: "OTP expired" };
+    // }
+
+    const user = await this.userRepository.findOneBy({ email });
+    if (!user) return { error: "User not found" };
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.save(user);
+
+    // await this.otpRepository.delete(otpRecord.id);
+
+    return { data: "Password reset successfully" };
+  }
+
   async sendOtpEmail(body: CreateUserDTO) {
     // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = this.generateOtp(6);
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await emailService
@@ -135,6 +189,15 @@ export class AuthService {
         await this.otpRepository.save({ email: body.email, otp, expiresAt });
       });
 
+    return otp;
+  }
+
+  generateOtp(length: number): string {
+    const digits = "0123456789";
+    let otp = "";
+    for (let i = 0; i < length; i++) {
+      otp += digits[Math.floor(Math.random() * digits.length)];
+    }
     return otp;
   }
 }

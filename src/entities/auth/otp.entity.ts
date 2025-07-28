@@ -1,4 +1,4 @@
-import { Entity } from "typeorm";
+import { Entity, Unique } from "typeorm";
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -8,11 +8,12 @@ import {
 } from "typeorm";
 
 @Entity({ name: "otp" })
+@Unique(["email", "otp"])
 export class Otp {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column()

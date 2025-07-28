@@ -25,7 +25,7 @@ export class ResetPasswordDTO {
   newPassword: string;
 
   @IsString()
-  token: string;
+  otp: string;
 }
 
 export class VerifyOtpDTO {
