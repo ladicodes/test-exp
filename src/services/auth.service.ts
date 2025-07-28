@@ -5,6 +5,10 @@ import bcrypt from "bcryptjs";
 import { emailService } from "./email.service";
 import { Otp } from "../entities/auth/otp.entity";
 import { format } from "date-fns";
+import jwt from "jsonwebtoken";
+import { Request } from "express";
+import { config } from "../config";
+import ms from "ms";
 
 export class AuthService {
   private readonly userRepository: Repository<User>;
@@ -58,9 +62,61 @@ export class AuthService {
     return true;
   }
 
-  async login(email: string, password: string) {}
+  async login(
+    email: string,
+    password: string
+  ): Promise<{ error?: string; data?: any }> {
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (!user) return { error: "User not found" };
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return { error: "Invalid password" };
+
+    if (!user.isVerified) return { error: "User not verified" };
+
+    const { password: _, ...userData } = user;
+
+    const payload = userData;
+
+    const accessToken = jwt.sign(payload, config.jwt.secret, {
+      expiresIn: config.jwt.expiresIn,
+    });
+
+    const refreshToken = jwt.sign(payload, config.jwt.refreshSecret, {
+      expiresIn: config.jwt.refreshExpiresIn,
+    });
+
+    return {
+      data: {
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          school: user.school,
+          profilePicture: user.profilePicture,
+          bio: user.bio,
+          github: user.github,
+          linkedin: user.linkedin,
+          twitter: user.twitter,
+          website: user.website,
+          dateOfBirth: user.dateOfBirth,
+        },
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+        expiresIn: Date.now() + ms(config.jwt.expiresIn),
+      },
+    };
+  }
 
   async logout(userId: string) {}
+
+  async refreshToken(req: Request) {}
 
   async sendOtpEmail(body: CreateUserDTO) {
     // Generate OTP

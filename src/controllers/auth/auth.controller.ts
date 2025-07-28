@@ -5,7 +5,7 @@ import { User } from "../../entities/user/user.entity";
 import { CreateUserDTO } from "../../entities/user/dto/create-user.entity";
 import { ResponseUtil } from "../../utils/response";
 import { Otp } from "../../entities/auth/otp.entity";
-import { VerifyOtpDTO } from "./dto/auth.dto";
+import { LoginUserDTO, VerifyOtpDTO } from "./dto/auth.dto";
 
 export class AuthController {
   public readonly authService: AuthService;
@@ -52,17 +52,18 @@ export class AuthController {
     }
   }
 
-  // async login(req: Request, res: Response): Promise<Response> {
-  //   const body: LoginUserDTO = req.body;
+  async login(req: Request, res: Response): Promise<Response> {
+    const body: LoginUserDTO = req.body;
 
-  //   try {
-  //     const user = await this.authService.login(body.email, body.password);
-  //     if (!user) {
-  //       return ResponseUtil.error(res, "Invalid credentials", 401);
-  //     }
-  //     return ResponseUtil.success(res, user, "Login successful");
-  //   } catch (error) {
-  //     return ResponseUtil.error(res, "Login failed", 500, error);
-  //   }
-  // }
+    try {
+      const { data, error } = await this.authService.login(
+        body.email,
+        body.password
+      );
+      if (error) return ResponseUtil.error(res, error, 401);
+      return ResponseUtil.success(res, data, "Login successful");
+    } catch (error) {
+      return ResponseUtil.error(res, "Login failed", 500, error);
+    }
+  }
 }

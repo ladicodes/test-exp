@@ -376,6 +376,270 @@
           }
         }
       }
+    },
+
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "description": "Authenticates a user with email and password, returns user data and JWT tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address",
+                    "example": "sarah.johnson@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User's password",
+                    "minLength": 6,
+                    "example": "mySecurePassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "example": "Sarah"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "example": "Johnson"
+                            },
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "example": "sarah.johnson@example.com"
+                            },
+                            "phoneNumber": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": "08098765432"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": ["student", "teacher", "admin"],
+                              "example": "teacher"
+                            },
+                            "school": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": "Harvard University"
+                            },
+                            "profilePicture": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "bio": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "github": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "linkedin": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "twitter": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "website": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "dateOfBirth": {
+                              "type": "string",
+                              "format": "date",
+                              "nullable": true,
+                              "example": null
+                            }
+                          }
+                        },
+                        "tokens": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string",
+                              "description": "JWT access token",
+                              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImExYjJjM2Q0LWU1ZjYtNDc4OS1hMDEyLWIzYzRkNWU2Zjc4OSIsImZpcnN0TmFtZSI6IlNhcmFoIiwibGFzdE5hbWUiOiJKb2huc29uIiwidGl0bGUiOm51bGwsImFkZHJlc3MiOm51bGwsInBob25lTnVtYmVyIjoiMDgwOTg3NjU0MzIiLCJyb2xlIjoidGVhY2hlciIsImVtYWlsIjoic2FyYWguam9obnNvbkBleGFtcGxlLmNvbSIsInNjaG9vbCI6IkhhcnZhcmQgVW5pdmVyc2l0eSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJiaW8iOm51bGwsImdpdGh1YiI6bnVsbCwibGlua2VkaW4iOm51bGwsInR3aXR0ZXIiOm51bGwsIndlYnNpdGUiOm51bGwsImRhdGVPZkJpcnRoIjpudWxsLCJpc1ZlcmlmaWVkIjp0cnVlLCJkZWxldGVkQXQiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjhUMDk6MzA6MTUuMTIzWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjhUMTI6NDU6MjAuNDU2WiIsImlhdCI6MTc1MzcwMjMxNSwiZXhwIjoxNzU0MzA3MTE1fQ.Abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+                            },
+                            "refreshToken": {
+                              "type": "string",
+                              "description": "JWT refresh token",
+                              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImExYjJjM2Q0LWU1ZjYtNDc4OS1hMDEyLWIzYzRkNWU2Zjc4OSIsImZpcnN0TmFtZSI6IlNhcmFoIiwibGFzdE5hbWUiOiJKb2huc29uIiwidGl0bGUiOm51bGwsImFkZHJlc3MiOm51bGwsInBob25lTnVtYmVyIjoiMDgwOTg3NjU0MzIiLCJyb2xlIjoidGVhY2hlciIsImVtYWlsIjoic2FyYWguam9obnNvbkBleGFtcGxlLmNvbSIsInNjaG9vbCI6IkhhcnZhcmQgVW5pdmVyc2l0eSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJiaW8iOm51bGwsImdpdGh1YiI6bnVsbCwibGlua2VkaW4iOm51bGwsInR3aXR0ZXIiOm51bGwsIndlYnNpdGUiOm51bGwsImRhdGVPZkJpcnRoIjpudWxsLCJpc1ZlcmlmaWVkIjp0cnVlLCJkZWxldGVkQXQiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjhUMDk6MzA6MTUuMTIzWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjhUMTI6NDU6MjAuNDU2WiIsImlhdCI6MTc1MzcwMjMxNSwiZXhwIjoxNzU2Mjk0MzE1fQ.Xyz789abc012def345ghi678jkl901mno234pqr567stu890vwx"
+                            }
+                          }
+                        },
+                        "expiresIn": {
+                          "type": "number",
+                          "description": "Token expiration timestamp in milliseconds",
+                          "example": 1754307115123
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication successful"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid request data"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "email is required",
+                        "password must be at least 6 characters"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid email or password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Account not verified or suspended",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Account not verified. Please verify your email address"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests - Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many login attempts. Please try again later"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
 

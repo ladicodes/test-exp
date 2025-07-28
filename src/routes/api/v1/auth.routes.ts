@@ -5,7 +5,10 @@ import { AuthController } from "../../../controllers/auth/auth.controller";
 import { validateBody } from "../../../middleware/validate.middleware";
 import { CreateUserDTO } from "../../../entities/user/dto/create-user.entity";
 import { Otp } from "../../../entities/auth/otp.entity";
-import { VerifyOtpDTO } from "../../../controllers/auth/dto/auth.dto";
+import {
+  LoginUserDTO,
+  VerifyOtpDTO,
+} from "../../../controllers/auth/dto/auth.dto";
 
 const [userRepository, otpRepository] = [
   AppDataSource.getRepository(User),
@@ -27,10 +30,10 @@ router.post(
   authController.verifyOtp.bind(authController)
 );
 
-// router.post(
-//   "/login",
-//   validateBody(LoginUserDTO),
-//   authController.login.bind(authController)
-// );
+router.post(
+  "/login",
+  validateBody(LoginUserDTO),
+  authController.login.bind(authController)
+);
 
 export default router;

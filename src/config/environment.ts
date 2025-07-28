@@ -12,6 +12,8 @@ const envSchema = Joi.object({
   // jwt
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRES_IN: Joi.string().default("7d"),
+  JWT_REFRESH_SECRET: Joi.string().required(),
+  JWT_REFRESH_EXPIRES_IN: Joi.string().default("30d"),
 
   // database
   DATABASE_HOST: Joi.string().default("localhost"),
@@ -49,6 +51,8 @@ export const config = {
   jwt: {
     secret: value.JWT_SECRET,
     expiresIn: value.JWT_EXPIRES_IN,
+    refreshSecret: value.JWT_REFRESH_SECRET,
+    refreshExpiresIn: value.JWT_REFRESH_EXPIRES_IN,
   },
   email: {
     host: value.EMAIL_HOST,
