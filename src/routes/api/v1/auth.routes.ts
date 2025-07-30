@@ -35,7 +35,6 @@ router.post(
 
 router.post(
   "/login",
-  authMiddleware,
   validateBody(LoginUserDTO),
   authController.login.bind(authController)
 );
