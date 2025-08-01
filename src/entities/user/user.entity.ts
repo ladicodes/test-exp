@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from "typeorm";
+import { Task } from "../tasks/task.entity";
 
 export enum UserRole {
   ADMIN = "admin",
@@ -72,6 +74,14 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  // Tasks assigned TO this user
+  @OneToMany(() => Task, (task) => task.assignedTo)
+  assignedTasks: Task[];
+
+  // Tasks this user assigned TO others
+  @OneToMany(() => Task, (task) => task.assignedBy)
+  createdTasks: Task[];
 
   @CreateDateColumn()
   createdAt: Date;
