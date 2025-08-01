@@ -11,7 +11,6 @@ import {
   ResetPasswordDTO,
   VerifyOtpDTO,
 } from "../../../controllers/auth/dto/auth.dto";
-import { authMiddleware } from "../../../middleware/auth.middleware";
 
 const [userRepository, otpRepository] = [
   AppDataSource.getRepository(User),
