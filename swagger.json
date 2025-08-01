@@ -640,11 +640,155 @@
           }
         }
       }
+    },
+
+    "/api/v1/users/user": {
+      "get": {
+        "summary": "Get user information",
+        "description": "Retrieve information about the authenticated user",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "User information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
 
   "components": {
-    "schemas": {},
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Benjamin"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Nkem"
+          },
+          "address": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "091887563333333"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["student", "admin"],
+            "example": "student"
+          },
+          "email": {
+            "type": "string",
+            "example": "benjaminnkemfrancis@gmail.com"
+          },
+          "school": {
+            "type": "string",
+            "example": "University of Lagos"
+          },
+          "profilePicture": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "bio": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "github": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "linkedin": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "twitter": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "website": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "dateOfBirth": {
+            "type": ["string", "null"],
+            "format": "date",
+            "example": null
+          },
+          "isVerified": {
+            "type": "boolean",
+            "example": true
+          },
+          "password": {
+            "type": "string",
+            "example": "$2b$10$akadNW9JHkWUBElcmQocOuhYhCRir2JAH0ox91RsvSW2zqn./0UB2"
+          },
+          "deletedAt": {
+            "type": ["string", "null"],
+            "format": "date-time",
+            "example": null
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-30T15:46:44.022Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-30T15:47:05.901Z"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error message"
+          }
+        }
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",

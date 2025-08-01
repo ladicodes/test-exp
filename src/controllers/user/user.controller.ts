@@ -20,6 +20,24 @@ export class UserController {
     }
   }
 
+  async getUserInfo(req: Request, res: Response): Promise<Response> {
+    // @ts-ignore
+    const userId = req.user?.id;
+    if (!userId) return ResponseUtil.error(res, "User not authenticated", 401);
+
+    try {
+      const user = await this.userService.getUserById(userId);
+      if (!user) return ResponseUtil.error(res, "User not found", 404);
+      return ResponseUtil.success(
+        res,
+        user,
+        "User info retrieved successfully"
+      );
+    } catch (error) {
+      return ResponseUtil.error(res, "Error retrieving user info", 500, error);
+    }
+  }
+
   async getUserById(req: Request, res: Response): Promise<Response> {
     const userId = req.params.id;
     try {
