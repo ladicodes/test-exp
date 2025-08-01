@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Task } from "../tasks/task.entity";
+import { Exclude } from "class-transformer";
 
 export enum UserRole {
   ADMIN = "admin",

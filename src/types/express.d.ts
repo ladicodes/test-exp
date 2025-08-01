@@ -1,11 +1,9 @@
-import { Request } from "express";
+import { User } from "../entities/user/user.entity";
 
-declare module "express" {
-  export interface Request {
-    user?: {
-      id: string;
-      email: string;
-      role: string;
-    };
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
   }
 }

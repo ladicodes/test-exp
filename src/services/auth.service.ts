@@ -25,7 +25,7 @@ export class AuthService {
 
   async register(body: CreateUserDTO) {
     const existingUser = await this.userRepository.findOne({
-      where: { email: body.email },
+      where: [{ email: body.email }, { phoneNumber: body.phoneNumber }],
     });
 
     if (existingUser) throw new Error("User already exists");

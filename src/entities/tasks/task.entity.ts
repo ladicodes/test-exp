@@ -50,6 +50,10 @@ export class Task {
   @ManyToOne(() => User, (user) => user.assignedTasks)
   assignedTo: User;
 
+  // column for tags
+  @Column("text", { array: true, default: [] })
+  tags: string[];
+
   @ManyToOne(() => User, (user) => user.createdTasks)
   assignedBy?: User;
 
