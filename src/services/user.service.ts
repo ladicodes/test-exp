@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { User } from "../entities/user/user.entity";
 import { CreateUserDTO } from "../entities/user/dto/create-user.entity";
 
@@ -36,5 +36,20 @@ export class UserService {
 
   async getUsersByRole(role: User["role"]): Promise<User[]> {
     return this.userRepository.find({ where: { role } });
+  }
+
+  /**
+   * Search users by name, email, or phone number.
+   * @param query - The search keyword.
+   */
+  async searchUsers(query: string): Promise<User[]> {
+    return this.userRepository.find({
+      where: [
+        { firstName: ILike(`%${query}%`) },
+        { lastName: ILike(`%${query}%`) },
+        { email: ILike(`%${query}%`) },
+        { phoneNumber: ILike(`%${query}%`) },
+      ],
+    });
   }
 }
