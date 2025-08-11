@@ -73,6 +73,22 @@ export class User {
   @Column()
   password: string;
 
+  //.. Additional fields for user profile
+
+  @Column("text", { array: true, nullable: true })
+  skills?: string[];
+
+  @Column({ nullable: true })
+  mainStack?: string;
+
+  @Column("text", { array: true, nullable: true })
+  stacks?: string[];
+
+  @Column({ type: "text", nullable: true })
+  notes?: string;
+
+  //.. end Additional fields for user profile
+
   @DeleteDateColumn()
   deletedAt?: Date;
 
