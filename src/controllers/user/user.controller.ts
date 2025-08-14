@@ -13,7 +13,8 @@ export class UserController {
 
   async getAllUsers(req: Request, res: Response): Promise<Response> {
     try {
-      const users = await this.userService.getAllUsers();
+      const query = req.query;
+      const users = await this.userService.getAllUsers(query);
       return ResponseUtil.success(res, users, "Users retrieved successfully");
     } catch (error) {
       return ResponseUtil.error(res, "Error retrieving users", 500, error);

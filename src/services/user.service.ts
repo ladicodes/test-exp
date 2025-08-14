@@ -1,5 +1,5 @@
-import { ILike, Repository } from "typeorm";
-import { User } from "../entities/user/user.entity";
+import { FindOptionsWhere, ILike, Repository } from "typeorm";
+import { User, UserRole } from "../entities/user/user.entity";
 import { CreateUserDTO } from "../entities/user/dto/create-user.entity";
 
 export class UserService {
@@ -9,8 +9,11 @@ export class UserService {
     this.userRepository = userRepository;
   }
 
-  async getAllUsers(): Promise<User[]> {
-    return this.userRepository.find();
+  async getAllUsers(query?: { role?: UserRole }): Promise<User[]> {
+    const where: FindOptionsWhere<User> = {};
+    if (query?.role) where.role = query.role;
+
+    return this.userRepository.find({ where });
   }
 
   async userExists(id: string): Promise<boolean> {

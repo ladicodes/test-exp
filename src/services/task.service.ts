@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { Task } from "../entities/tasks/task.entity";
 import { CreateTaskDto } from "../entities/tasks/dto/create-task.dto";
-import { User } from "../entities/user/user.entity";
+import { User, UserRole } from "../entities/user/user.entity";
 import { isBefore } from "date-fns";
 
 export class TaskService {
@@ -24,18 +24,18 @@ export class TaskService {
       throw new Error("Due date cannot be in the past.");
 
     const userAssigned = await this.userRepository.findOneBy({
-      id: body.assignedTo,
+      id: user?.role === UserRole.STUDENT ? user.id : body.assignedTo,
     });
 
     const userAssignedBy = await this.userRepository.findOneBy({
-      id: user?.id,
+      id: user?.role === UserRole.STUDENT ? body.assignedTo : user?.id,
     });
 
     if (!userAssigned) throw new Error("Assigned user not found");
     if (!userAssignedBy) throw new Error("Assigned by user not found");
 
-    if (userAssigned.role !== "student")
-      throw new Error("You can only assign tasks to students");
+    // if (userAssigned.role !== "student")
+    //   throw new Error("You can only assign tasks to students");
 
     const task = this.taskRepository.create({
       ...body,

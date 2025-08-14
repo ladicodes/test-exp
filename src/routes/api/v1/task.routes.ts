@@ -7,7 +7,6 @@ import { CreateTaskDto } from "../../../entities/tasks/dto/create-task.dto";
 import {
   adminAuthMiddleware,
   authMiddleware,
-  instructorAuthMiddleware,
 } from "../../../middleware/auth.middleware";
 import { User } from "../../../entities/user/user.entity";
 
@@ -20,14 +19,14 @@ const taskController = new TaskController(
 
 router.post(
   "/",
-  instructorAuthMiddleware,
+  authMiddleware,
   validateBody(CreateTaskDto),
   taskController.createTask.bind(taskController)
 );
 
 router.get(
   "/",
-  adminAuthMiddleware,
+  authMiddleware,
   taskController.getAllTasks.bind(taskController)
 );
 
@@ -45,14 +44,14 @@ router.get(
 
 router.put(
   "/:id",
-  instructorAuthMiddleware,
+  authMiddleware,
   validateBody(CreateTaskDto),
   taskController.updateTask.bind(taskController)
 );
 
 router.delete(
   "/:id",
-  instructorAuthMiddleware,
+  authMiddleware,
   taskController.deleteTask.bind(taskController)
 );
 
