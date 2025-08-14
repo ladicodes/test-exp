@@ -680,6 +680,144 @@
           }
         }
       }
+    },
+
+    "/sessions": {
+      "post": {
+        "summary": "Create a new session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session created successfully"
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all sessions",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter sessions by user ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Session" }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/sessions/{id}": {
+      "get": {
+        "summary": "Get session by ID",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Session" }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Session updated successfully" },
+          "400": { "description": "Invalid data" },
+          "404": { "description": "Session not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Session deleted successfully" },
+          "404": { "description": "Session not found" }
+        }
+      }
     }
   },
 
@@ -786,6 +924,60 @@
             "type": "string",
             "example": "Error message"
           }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": { "type": "string", "nullable": true },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreateSessionDto": {
+        "type": "object",
+        "required": ["title", "category", "startTime"],
+        "properties": {
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": { "type": "string", "nullable": true }
+        }
+      },
+      "UpdateSessionDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": { "type": "string", "format": "date-time" },
+          "description": { "type": "string" }
         }
       }
     },

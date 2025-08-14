@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Task } from "../tasks/task.entity";
-import { Exclude } from "class-transformer";
+import { Session } from "../session/session.entity";
 
 export enum UserRole {
   ADMIN = "admin",
@@ -72,6 +72,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[];
 
   //.. Additional fields for user profile
 
