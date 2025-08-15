@@ -23,6 +23,19 @@ export class AuthService {
     this.otpRepository = otpRepository;
   }
 
+  async updateUsersSerialNumber() {
+    const users = await this.userRepository.find();
+    for (const user of users) {
+      if (!user.serialNumber) {
+        user.serialNumber = `SN-${new Date().getFullYear()}-${Math.floor(
+          Math.random() * 1000
+        )}`;
+        await this.userRepository.save(user);
+      }
+    }
+    return "Serial numbers updated successfully";
+  }
+
   async register(body: CreateUserDTO) {
     const existingUser = await this.userRepository.findOne({
       where: [{ email: body.email }, { phoneNumber: body.phoneNumber }],

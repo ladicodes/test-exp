@@ -21,6 +21,11 @@ const authController = new AuthController(userRepository, otpRepository);
 const router = express.Router();
 
 router.post(
+  "/update-serial-numbers",
+  authController.updateUsersSerialNumber.bind(authController)
+);
+
+router.post(
   "/register",
   validateBody(CreateUserDTO),
   authController.register.bind(authController)

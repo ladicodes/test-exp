@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  BeforeInsert,
 } from "typeorm";
 import { Task } from "../tasks/task.entity";
 import { Session } from "../session/session.entity";
@@ -45,6 +46,9 @@ export class User {
 
   @Column()
   school: string;
+
+  @Column({ nullable: true })
+  serialNumber: string;
 
   @Column({ nullable: true })
   profilePicture?: string;
@@ -108,4 +112,11 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeInsert()
+  beforeInsertActions() {
+    this.serialNumber = `SN-${new Date().getFullYear()}-${Math.floor(
+      Math.random() * 1000
+    )}`;
+  }
 }
