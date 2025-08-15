@@ -5,7 +5,7 @@ import { Task } from "../../../entities/tasks/task.entity";
 import { validateBody } from "../../../middleware/validate.middleware";
 import { CreateTaskDto } from "../../../entities/tasks/dto/create-task.dto";
 import {
-  adminAuthMiddleware,
+  instructorAuthMiddleware,
   authMiddleware,
 } from "../../../middleware/auth.middleware";
 import { User } from "../../../entities/user/user.entity";

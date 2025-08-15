@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Task } from "../tasks/task.entity";
 import { Session } from "../session/session.entity";
+import { Course } from "../course/course.entity";
 
 export enum UserRole {
   ADMIN = "admin",
@@ -79,6 +80,9 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
+
+  @OneToMany(() => Course, (course) => course.instructor)
+  courses: Course[];
 
   //.. Additional fields for user profile
 
