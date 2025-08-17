@@ -22,6 +22,27 @@ export class AuthController {
     this.authService = new AuthService(userRepository, otpRepository);
   }
 
+  async updateUsersSerialNumber(
+    req: Request,
+    res: Response
+  ): Promise<Response> {
+    try {
+      const result = await this.authService.updateUsersSerialNumber();
+      return ResponseUtil.success(
+        res,
+        result,
+        "Serial numbers updated successfully"
+      );
+    } catch (error) {
+      return ResponseUtil.error(
+        res,
+        "Error updating serial numbers",
+        500,
+        error
+      );
+    }
+  }
+
   async register(req: Request, res: Response): Promise<Response> {
     const userData = req.body as CreateUserDTO;
 

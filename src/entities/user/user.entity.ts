@@ -5,7 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
+  BeforeInsert,
 } from "typeorm";
+import { Task } from "../tasks/task.entity";
+import { Session } from "../session/session.entity";
+import { Course } from "../course/course.entity";
 
 export enum UserRole {
   ADMIN = "admin",
@@ -44,6 +49,9 @@ export class User {
   school: string;
 
   @Column({ nullable: true })
+  serialNumber: string;
+
+  @Column({ nullable: true })
   profilePicture?: string;
 
   @Column({ nullable: true })
@@ -70,6 +78,12 @@ export class User {
   @Column()
   password: string;
 
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[];
+
+  @OneToMany(() => Course, (course) => course.instructor)
+  courses: Course[];
+
   //.. Additional fields for user profile
 
   @Column("text", { array: true, nullable: true })
@@ -89,9 +103,24 @@ export class User {
   @DeleteDateColumn()
   deletedAt?: Date;
 
+  // Tasks assigned TO this user
+  @OneToMany(() => Task, (task) => task.assignedTo)
+  assignedTasks: Task[];
+
+  // Tasks this user assigned TO others
+  @OneToMany(() => Task, (task) => task.assignedBy)
+  createdTasks: Task[];
+
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeInsert()
+  beforeInsertActions() {
+    this.serialNumber = `SN-${new Date().getFullYear()}-${Math.floor(
+      Math.random() * 1000
+    )}`;
+  }
 }

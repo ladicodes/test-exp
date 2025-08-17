@@ -874,6 +874,62 @@
                 }
               }
             }
+            }
+          },
+
+    "/api/v1/users/user": {
+      "get": {
+        "summary": "Get user information",
+        "description": "Retrieve information about the authenticated user",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "User information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/sessions": {
+      "post": {
+        "summary": "Create a new session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionDto"
+              }
+            }
           }
         },
         "404": {
@@ -887,11 +943,522 @@
             }
           }
         }
+      },
+
+        "responses": {
+          "201": {
+            "description": "Session created successfully"
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all sessions",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter sessions by user ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Session" }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/sessions/{id}": {
+      "get": {
+        "summary": "Get session by ID",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Session" }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Session updated successfully" },
+          "400": { "description": "Invalid data" },
+          "404": { "description": "Session not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Session deleted successfully" },
+          "404": { "description": "Session not found" }
+        }
+      }
+    },
+
+    "/courses": {
+      "post": {
+        "summary": "Create a new course",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCourseDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Course created successfully" },
+          "400": { "description": "Validation error" },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "get": {
+        "summary": "Get all courses",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Courses fetched successfully" }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "get": {
+        "summary": "Get a course by ID",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Course fetched successfully" },
+          "404": { "description": "Course not found" }
+        }
+      },
+      "put": {
+        "summary": "Update a course",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCourseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Course updated successfully" },
+          "404": { "description": "Course not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a course",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Course deleted successfully" },
+          "404": { "description": "Course not found" }
+        }
+      }
+    },
+    "/lessons/{courseId}": {
+      "post": {
+        "summary": "Create a lesson in a course",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateLessonDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Lesson created successfully" },
+          "404": { "description": "Course not found" }
+        }
+      }
+    },
+    "/lessons/course/{courseId}": {
+      "get": {
+        "summary": "Get lessons for a course",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lessons fetched successfully" }
+        }
+      }
+    },
+    "/lessons/{id}": {
+      "get": {
+        "summary": "Get a lesson by ID",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lesson fetched successfully" },
+          "404": { "description": "Lesson not found" }
+        }
+      },
+      "put": {
+        "summary": "Update a lesson",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateLessonDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Lesson updated successfully" },
+          "404": { "description": "Lesson not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a lesson",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lesson deleted successfully" },
+          "404": { "description": "Lesson not found" }
+        }
       }
     }
   },
   "components": {
-    "schemas": {},
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Benjamin"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Nkem"
+          },
+          "address": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "091887563333333"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["student", "admin"],
+            "example": "student"
+          },
+          "email": {
+            "type": "string",
+            "example": "benjaminnkemfrancis@gmail.com"
+          },
+          "school": {
+            "type": "string",
+            "example": "University of Lagos"
+          },
+          "profilePicture": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "bio": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "github": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "linkedin": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "twitter": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "website": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "dateOfBirth": {
+            "type": ["string", "null"],
+            "format": "date",
+            "example": null
+          },
+          "isVerified": {
+            "type": "boolean",
+            "example": true
+          },
+          "password": {
+            "type": "string",
+            "example": "$2b$10$akadNW9JHkWUBElcmQocOuhYhCRir2JAH0ox91RsvSW2zqn./0UB2"
+          },
+          "deletedAt": {
+            "type": ["string", "null"],
+            "format": "date-time",
+            "example": null
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-30T15:46:44.022Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-30T15:47:05.901Z"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error message"
+          }
+        }
+      },
+      "UpdateCourseDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "thumbnailUrl": { "type": "string", "format": "uri" },
+          "status": { "type": "string", "enum": ["draft", "published"] }
+        }
+      },
+      "CreateLessonDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "Lesson 1: Setting up" },
+          "content": {
+            "type": "string",
+            "example": "In this lesson, we will set up the development environment."
+          },
+          "videoUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/video.mp4"
+          },
+          "order": { "type": "integer", "example": 1 }
+        },
+        "required": ["title", "content"]
+      },
+      "UpdateLessonDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "videoUrl": { "type": "string", "format": "uri" },
+          "order": { "type": "integer" }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": { "type": "string", "nullable": true },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreateSessionDto": {
+        "type": "object",
+        "required": ["title", "category", "startTime"],
+        "properties": {
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": { "type": "string", "nullable": true }
+        }
+      },
+      "UpdateSessionDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": { "type": "string", "format": "date-time" },
+          "description": { "type": "string" }
+        }
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -911,4 +1478,4 @@
       "description": "Miscellaneous endpoints"
     }
   ]
-}
+},

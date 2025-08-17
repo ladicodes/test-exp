@@ -1,5 +1,5 @@
-import { Repository } from "typeorm";
-import { User } from "../entities/user/user.entity";
+import { FindOptionsWhere, ILike, Repository } from "typeorm";
+import { User, UserRole } from "../entities/user/user.entity";
 import { CreateUserDTO } from "../entities/user/dto/create-user.entity";
 
 export class UserService {
@@ -9,8 +9,11 @@ export class UserService {
     this.userRepository = userRepository;
   }
 
-  async getAllUsers(): Promise<User[]> {
-    return this.userRepository.find();
+  async getAllUsers(query?: { role?: UserRole }): Promise<User[]> {
+    const where: FindOptionsWhere<User> = {};
+    if (query?.role) where.role = query.role;
+
+    return this.userRepository.find({ where });
   }
 
   async userExists(id: string): Promise<boolean> {
@@ -36,5 +39,20 @@ export class UserService {
 
   async getUsersByRole(role: User["role"]): Promise<User[]> {
     return this.userRepository.find({ where: { role } });
+  }
+
+  /**
+   * Search users by name, email, or phone number.
+   * @param query - The search keyword.
+   */
+  async searchUsers(query: string): Promise<User[]> {
+    return this.userRepository.find({
+      where: [
+        { firstName: ILike(`%${query}%`) },
+        { lastName: ILike(`%${query}%`) },
+        { email: ILike(`%${query}%`) },
+        { phoneNumber: ILike(`%${query}%`) },
+      ],
+    });
   }
 }
