@@ -3,7 +3,10 @@ import { TaskController } from "../../../controllers/tasks/task.controller";
 import { AppDataSource } from "../../../utils/data-source";
 import { Task } from "../../../entities/tasks/task.entity";
 import { validateBody } from "../../../middleware/validate.middleware";
-import { CreateTaskDto } from "../../../entities/tasks/dto/create-task.dto";
+import {
+  CreateTaskDto,
+  UpdateTaskDto,
+} from "../../../entities/tasks/dto/create-task.dto";
 import {
   instructorAuthMiddleware,
   authMiddleware,
@@ -45,7 +48,7 @@ router.get(
 router.put(
   "/:id",
   authMiddleware,
-  validateBody(CreateTaskDto),
+  validateBody(UpdateTaskDto),
   taskController.updateTask.bind(taskController)
 );
 
