@@ -15,9 +15,7 @@
     "/health": {
       "get": {
         "summary": "Health check",
-        "tags": [
-          "Utility"
-        ],
+        "tags": ["Utility"],
         "responses": {
           "200": {
             "description": "Service is healthy",
@@ -46,9 +44,7 @@
 
     "/v1/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "description": "Creates a new user account with the provided information",
         "requestBody": {
@@ -225,9 +221,7 @@
 
     "/v1/auth/verify-otp": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Verify OTP code",
         "description": "Verifies the OTP code sent to the user's email address",
         "requestBody": {
@@ -236,10 +230,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "otp",
-                  "email"
-                ],
+                "required": ["otp", "email"],
                 "properties": {
                   "otp": {
                     "type": "string",
@@ -389,9 +380,7 @@
 
     "/api/v1/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "User login",
         "description": "Authenticates a user with email and password, returns user data and JWT tokens",
         "requestBody": {
@@ -400,10 +389,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
+                "required": ["email", "password"],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -465,11 +451,7 @@
                             },
                             "role": {
                               "type": "string",
-                              "enum": [
-                                "student",
-                                "teacher",
-                                "admin"
-                              ],
+                              "enum": ["student", "teacher", "admin"],
                               "example": "teacher"
                             },
                             "school": {
@@ -659,223 +641,6 @@
         }
       }
     },
-    "/api/v1/profile": {
-      "post": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "Create a new profile",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schemas": {
-                "Profile": {
-                  "type": "object",
-                  "properties": {
-                    "avatar": {
-                      "type": "string",
-                      "example": "https://example.com/avatar.jpg"
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "Demilorun"
-                    },
-                    "email": {
-                      "type": "string",
-                      "example": "demilorun@example.com"
-                    },
-                    "matric_number": {
-                      "type": "string",
-                      "example": "220202004"
-                    },
-                    "phone": {
-                      "type": "string",
-                      "example": "+1234567890"
-                    },
-                    "location": {
-                      "type": "string",
-                      "example": "Lagos, Nigeria"
-                    },
-                    "university": {
-                      "type": "string",
-                      "example": "Mcpherson University"
-                    },
-                    "department": {
-                      "type": "string",
-                      "example": "Computer Science"
-                    },
-                    "year": {
-                      "type": "string",
-                      "example": "300"
-                    },
-                    "skills": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": [
-                        "JavaScript",
-                        "TypeScript",
-                        "PHP",
-                        "Python",
-                        "Node.js"
-                      ]
-                    },
-                    "main_stack": {
-                      "type": "string",
-                      "example": "Backend"
-                    },
-                    "stacks": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": [
-                        "Express",
-                        "PostgreSQL",
-                        "Docker"
-                      ]
-                    },
-                    "notes": {
-                      "type": "string",
-                      "example": "Interested in AI projects."
-                    },
-                    "activity_done": {
-                      "type": "string",
-                      "example": "Completed Hackathon 2024"
-                    },
-                    "mentorship_sessions_attended": {
-                      "type": "string",
-                      "example": "5"
-                    }
-                  },
-                  "required": [
-                    "name",
-                    "email"
-                  ]
-                },
-                "ErrorResponse": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Error message here"
-                    },
-                    "statusCode": {
-                      "type": "integer",
-                      "example": 500
-                    },
-                    "error": {
-                      "type": "string",
-                      "nullable": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": {
-          "description": "Successful response",
-          "content": {
-            "application/json": {}
-          }
-        }
-      }
-    }
-  },
-  "/api/v1/profile/": {
-    "put": {
-      "tags": [
-        "profile"
-      ],
-      "summary": "update profile by ID",
-      "requestBody": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "example": {
-                "name": "Demilorun",
-                "phone": "08012345677",
-                "location": "osun",
-                "skills": [
-                  "Node.js",
-                  "TypeScript",
-                  "PostgreSQL"
-                ],
-                "main_stack": "Backend",
-                "university": "McPherson University",
-                "department": "Computer Science",
-                "year": "2025"
-              }
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "name": "Content-Type",
-          "in": "header",
-          "schema": {
-            "type": "string"
-          },
-          "example": "application/json"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Successful response",
-          "content": {
-            "application/json": {}
-          }
-        }
-      }
-    }
-  },
-  "/api/v1/profile/{id}": {
-    "get": {
-      "tags": [
-        "Profile"
-      ],
-      "summary": "Get a profile by ID",
-      "security": [
-        {
-          "bearerAuth": []
-        }
-      ],
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Profile retrieved successfully",
-          "content": {
-            "application/json": {
-              "example": {
-                "success": true,
-                "message": "Profile retrieved successfully",
-                "data": {
-                  "$ref": "#/components/schemas/Profile"
-                }
-              }
-            }
-            }
-          },
 
     "/api/v1/users/user": {
       "get": {
@@ -932,19 +697,6 @@
             }
           }
         },
-        "404": {
-          "description": "Profile not found",
-          "content": {
-            "application/json": {
-              "example": {
-                "success": false,
-                "message": "Profile not found"
-              }
-            }
-          }
-        }
-      },
-
         "responses": {
           "201": {
             "description": "Session created successfully"
@@ -1264,6 +1016,7 @@
       }
     }
   },
+
   "components": {
     "schemas": {
       "User": {
@@ -1478,4 +1231,4 @@
       "description": "Miscellaneous endpoints"
     }
   ]
-},
+}
