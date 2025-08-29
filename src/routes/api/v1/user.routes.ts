@@ -16,7 +16,7 @@ router.get(
 );
 
 router.get(
-  "/user",
+  "/info",
   authMiddleware,
   userController.getUserInfo.bind(userController)
 );
@@ -27,8 +27,8 @@ router.get(
   userController.getUsersByRole.bind(userController)
 );
 
-router.put(
-  "/:id",
+router.patch(
+  "/info",
   authMiddleware,
   userController.updateUser.bind(userController)
 );

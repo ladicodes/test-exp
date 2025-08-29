@@ -49,6 +49,12 @@ export class User {
   school: string;
 
   @Column({ nullable: true })
+  department: string;
+
+  @Column({ nullable: true })
+  level: string;
+
+  @Column({ nullable: true })
   serialNumber: string;
 
   @Column({ nullable: true })

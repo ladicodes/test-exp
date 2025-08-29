@@ -61,10 +61,15 @@ export class UserController {
   }
 
   async updateUser(req: Request, res: Response): Promise<Response> {
-    const userId = req.params.id;
     const userData = req.body;
     try {
-      const updatedUser = await this.userService.updateUser(userId, userData);
+      // @ts-ignore
+      const userId = req.user?.id;
+
+      const updatedUser = await this.userService.updateUser(
+        userId as string,
+        userData
+      );
       if (!updatedUser) return ResponseUtil.error(res, "User not found", 404);
       return ResponseUtil.success(
         res,

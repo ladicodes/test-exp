@@ -29,8 +29,17 @@ export class UserService {
     id: string,
     data: Partial<CreateUserDTO>
   ): Promise<User | null> {
-    await this.userRepository.update(id, data);
-    return this.getUserById(id);
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) return null;
+
+      Object.assign(user, data);
+
+      await this.userRepository.save(user);
+      return this.getUserById(id);
+    } catch (error) {
+      return null;
+    }
   }
 
   async deleteUser(id: string): Promise<void> {
