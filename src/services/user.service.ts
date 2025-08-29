@@ -25,10 +25,7 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async updateUser(
-    id: string,
-    data: Partial<CreateUserDTO>
-  ): Promise<User | null> {
+  async updateUser(id: string, data: Partial<User>): Promise<User | null> {
     try {
       const user = await this.userRepository.findOne({ where: { id } });
       if (!user) return null;

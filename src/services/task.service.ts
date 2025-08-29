@@ -1,5 +1,5 @@
-import { Repository } from "typeorm";
-import { Task } from "../entities/tasks/task.entity";
+import { FindManyOptions, Repository } from "typeorm";
+import { Task, TaskStatus } from "../entities/tasks/task.entity";
 import { CreateTaskDto } from "../entities/tasks/dto/create-task.dto";
 import { User, UserRole } from "../entities/user/user.entity";
 import { isBefore } from "date-fns";
@@ -46,10 +46,14 @@ export class TaskService {
     await this.taskRepository.save(task);
   }
 
-  async getAllTasks() {
-    return this.taskRepository.find({
+  async getAllTasks(status?: TaskStatus) {
+    const options: FindManyOptions<Task> = {
       relations: ["assignedTo", "assignedBy"],
-    });
+    };
+
+    if (status) options.where = { status };
+
+    return this.taskRepository.find(options);
   }
 
   async getUserTasks(userId: string, query?: any) {

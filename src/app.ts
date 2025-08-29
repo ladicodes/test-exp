@@ -9,8 +9,11 @@ import { errorMiddleware } from "./middleware/error.middleware";
 import swaggerUi from "swagger-ui-express";
 import routes from "./routes";
 import swaggerDocument from "../swagger.json";
+import path from "path";
 
 const app = express();
+
+const uploadsDir = path.join(__dirname, "..", "uploads");
 
 // Security middleware
 app.use(helmet());
@@ -42,6 +45,9 @@ app.get("/health", (req, res) => {
 app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API routes
+
+app.use("/uploads", express.static(uploadsDir));
+
 app.use("/", routes);
 
 app.use((req, res) => {

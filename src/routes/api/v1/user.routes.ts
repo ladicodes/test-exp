@@ -33,6 +33,13 @@ router.patch(
   userController.updateUser.bind(userController)
 );
 
+router.patch(
+  "/profile-picture",
+  authMiddleware,
+  userController.getProfilePictureUpload(),
+  userController.updateProfilePicture.bind(userController)
+);
+
 router.delete(
   "/:id",
   authMiddleware,
