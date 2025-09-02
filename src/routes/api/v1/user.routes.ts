@@ -1,8 +1,8 @@
 import express from "express";
-import { UserController } from "../../../controllers/user/user.controller";
-import { AppDataSource } from "../../../utils/data-source";
-import { User } from "../../../entities/user/user.entity";
-import { authMiddleware } from "../../../middleware/auth.middleware";
+import {UserController} from "../../../controllers/user/user.controller";
+import {AppDataSource} from "../../../utils/data-source";
+import {User, UserRole} from "../../../entities/user/user.entity";
+import {authenticateAndAuthorize, authMiddleware} from "../../../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -11,37 +11,37 @@ const userController = new UserController(userRepository);
 
 router.get(
   "/",
-  authMiddleware,
+    authenticateAndAuthorize(UserRole.ADMIN),
   userController.getAllUsers.bind(userController)
 );
 
 router.get(
   "/user",
-  authMiddleware,
+    authenticateAndAuthorize(),
   userController.getUserInfo.bind(userController)
 );
 
 router.get(
   "/role",
-  authMiddleware,
+    authenticateAndAuthorize(),
   userController.getUsersByRole.bind(userController)
 );
 
 router.put(
   "/:id",
-  authMiddleware,
+    authenticateAndAuthorize(),
   userController.updateUser.bind(userController)
 );
 
 router.delete(
   "/:id",
-  authMiddleware,
+    authenticateAndAuthorize(),
   userController.deleteUser.bind(userController)
 );
 
 router.get(
   "/:id",
-  authMiddleware,
+    authenticateAndAuthorize(),
   userController.getUserById.bind(userController)
 );
 
