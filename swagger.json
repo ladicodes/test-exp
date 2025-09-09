@@ -1,3 +1,4 @@
+
 {
   "openapi": "3.0.0",
   "info": {
@@ -1014,6 +1015,544 @@
           "404": { "description": "Lesson not found" }
         }
       }
+    },
+
+    "/v1/admin/dashboard": {
+      "get": {
+        "summary": "Get admin dashboard stats",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get statistics for mentees, mentors, tasks, and diary entries. Only accessible by admin users.",
+        "responses": {
+          "200": {
+            "description": "Dashboard stats retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "mentees": {
+                          "type": "number",
+                          "example": 45
+                        },
+                        "mentors": {
+                          "type": "number", 
+                          "example": 12
+                        },
+                        "tasks": {
+                          "type": "number",
+                          "example": 128
+                        },
+                        "diaryEntries": {
+                          "type": "number",
+                          "example": 89
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Dashboard stats retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Token missing or invalid"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/users/{userId}/role": {
+      "put": {
+        "summary": "Change user role",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Change a user's role. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the user to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["role"],
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "enum": ["admin", "student", "instructor"],
+                    "example": "instructor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User role updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid role or missing user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/users/{userId}/deactivate": {
+      "patch": {
+        "summary": "Deactivate user (soft delete)",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Soft delete a user account. The user can be restored later. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the user to deactivate"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deactivated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "User deactivated successfully"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User deactivated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/users/{userId}": {
+      "delete": {
+        "summary": "Permanently delete user",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Permanently delete a user account. This action cannot be undone. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the user to delete permanently"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User permanently deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "User permanently deleted"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User permanently deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/mentor-assignment": {
+      "post": {
+        "summary": "Assign mentor to mentee",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Assign an instructor as mentor to a student (mentee). Only accessible by admin users.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["menteeId", "mentorId"],
+                "properties": {
+                  "menteeId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the student to be mentored",
+                    "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+                  },
+                  "mentorId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the instructor to be the mentor",
+                    "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mentor assigned to mentee successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "mentee": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "example": "John"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "example": "Doe"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "john.doe@example.com"
+                            }
+                          }
+                        },
+                        "mentor": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "example": "Sarah"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "example": "Johnson"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "sarah.johnson@example.com"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mentor assigned to mentee successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data or role mismatch"
+          },
+          "404": {
+            "description": "Mentee or mentor not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/diary": {
+      "get": {
+        "summary": "Get all diary entries",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get all diary entries with optional user filtering. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter diary entries by user ID (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary entries retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DiaryEntryWithUser"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entries retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/diary/{diaryId}": {
+      "get": {
+        "summary": "Get single diary entry",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get a specific diary entry by ID with user information. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the diary entry to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary entry retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DiaryEntryWithUser"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entry retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing diary ID"
+          },
+          "404": {
+            "description": "Diary entry not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete diary entry",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Permanently delete a diary entry. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the diary entry to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary entry deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Diary entry deleted successfully"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entry deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing diary ID"
+          },
+          "404": {
+            "description": "Diary entry not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
     }
   },
 
@@ -1210,6 +1749,73 @@
           "endTime": { "type": "string", "format": "date-time" },
           "description": { "type": "string" }
         }
+      },
+      "DiaryEntryWithUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d1e2f3a4-b5c6-4789-a012-b3c4d5e6f789"
+          },
+          "title": {
+            "type": "string",
+            "example": "My Learning Journey"
+          },
+          "whatWorkOn": {
+            "type": "string",
+            "example": "Working on React hooks and state management"
+          },
+          "whatLearned": {
+            "type": "string", 
+            "example": "Learned about useState and useEffect hooks"
+          },
+          "whatCouldBeBetter": {
+            "type": "string",
+            "example": "Could improve understanding of useContext"
+          },
+          "howItFeels": {
+            "type": "string",
+            "example": "Feeling confident about the progress made"
+          },
+          "goalsForNextTime": {
+            "type": "string",
+            "example": "Focus on learning useReducer and custom hooks"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+              },
+              "firstName": {
+                "type": "string",
+                "example": "John"
+              },
+              "lastName": {
+                "type": "string", 
+                "example": "Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "john.doe@example.com"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -1229,6 +1835,10 @@
     {
       "name": "Utility",
       "description": "Miscellaneous endpoints"
+    },
+    {
+      "name": "Admin",
+      "description": "Administrative endpoints for managing users, diary entries, and system statistics. Requires admin privileges."
     }
   ]
 }

@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { User } from "../user/user.entity";
 
 @Entity({ name: "diaries" })
 export class Diary {
@@ -28,6 +30,9 @@ export class Diary {
 
   @Column()
   goalsForNextTime: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  user?: User;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -13,11 +13,18 @@ const profileController = new ProfileController(profileRepository);
 // Guarded Routes
 router.use( authenticateAndAuthorize()); // Apply JWT middleware to all below
 
+
+
+router.get("/", authenticateAndAuthorize(), profileController.getAllProfiles.bind(profileController));
+
+
 // create a new profile entry
 router.post("/",authenticateAndAuthorize(), profileController.createProfile.bind(profileController));
 
-// get all profile entries
+// get a profile entry by id
 router.get("/:id", authenticateAndAuthorize(), profileController.getProfileById.bind(profileController));
+
+
 
 // update a profile entry by id
 router.put("/:id",authenticateAndAuthorize(), profileController.updateProfile.bind(profileController));
