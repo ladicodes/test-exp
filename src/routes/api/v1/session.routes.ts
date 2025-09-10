@@ -30,7 +30,7 @@ router.post(
 // Get all sessions (Admin only or filterable)
 router.get(
   "/",
-  adminAuthMiddleware,
+  authMiddleware,
   sessionController.getAllSessions.bind(sessionController)
 );
 
