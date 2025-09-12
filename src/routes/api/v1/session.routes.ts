@@ -52,6 +52,5 @@ router.delete(
   sessionController.deleteSession.bind(sessionController)
 );
 
-//TODO: WIP
 
 export default router;
