@@ -26,7 +26,9 @@ router.post(
 // Get all sessions (Admin only or filterable)
 router.get(
   "/",
+
   authenticateAndAuthorize(UserRole.ADMIN),
+
   sessionController.getAllSessions.bind(sessionController)
 );
 

@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { TaskService } from "../../services/task.service";
-import { Task } from "../../entities/tasks/task.entity";
+import { Task, TaskStatus } from "../../entities/tasks/task.entity";
 import { Request, Response } from "express";
 import { CreateTaskDto } from "../../entities/tasks/dto/create-task.dto";
 import { ResponseUtil } from "../../utils/response";
@@ -34,7 +34,9 @@ export class TaskController {
 
   async getAllTasks(req: Request, res: Response) {
     try {
-      const tasks = await this.taskService.getAllTasks();
+      const status = req.query.status as TaskStatus;
+
+      const tasks = await this.taskService.getAllTasks(status);
       return ResponseUtil.success(res, tasks, "Tasks retrieved successfully");
     } catch (error) {
       return ResponseUtil.error(

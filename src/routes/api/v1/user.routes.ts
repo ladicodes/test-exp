@@ -16,8 +16,10 @@ router.get(
 );
 
 router.get(
-  "/user",
+
+  "/info",
     authenticateAndAuthorize(),
+
   userController.getUserInfo.bind(userController)
 );
 
@@ -27,10 +29,19 @@ router.get(
   userController.getUsersByRole.bind(userController)
 );
 
+
 router.put(
   "/:id",
     authenticateAndAuthorize(),
+
   userController.updateUser.bind(userController)
+);
+
+router.patch(
+  "/profile-picture",
+  authMiddleware,
+  userController.getProfilePictureUpload(),
+  userController.updateProfilePicture.bind(userController)
 );
 
 router.delete(
