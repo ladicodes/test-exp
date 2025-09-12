@@ -13,15 +13,9 @@ export class DiaryController {
 
   async createDiaryEntry(req: Request, res: Response): Promise<Response> {
     const diaryData = req.body;
-    // @ts-ignore
-    const userId = req.user?.id;
-
-    if (!userId) {
-      return ResponseUtil.error(res, "User authentication required", 401);
-    }
 
     try {
-      const newEntry = await this.diaryService.createDiaryEntry(diaryData, userId);
+      const newEntry = await this.diaryService.createDiaryEntry(diaryData);
 
       return ResponseUtil.success(
         res,
@@ -29,9 +23,6 @@ export class DiaryController {
         "Diary entry created successfully"
       );
     } catch (error: any) {
-      if (error.message === "User not found") {
-        return ResponseUtil.error(res, "User not found", 404, error);
-      }
       return ResponseUtil.error(
         res,
         error.message || "Failed to create diary entry",

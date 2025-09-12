@@ -10,7 +10,6 @@ import { Request } from "express";
 import { config } from "../config";
 import ms from "ms";
 import { ResetPasswordDTO } from "../controllers/auth/dto/auth.dto";
-import {JWTPayload} from "../middleware/auth.middleware";
 
 export class AuthService {
   private readonly userRepository: Repository<User>;
@@ -98,11 +97,7 @@ export class AuthService {
 
     const { password: _, ...userData } = user;
 
-    const payload = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    } as JWTPayload;
+    const payload = userData;
 
     const accessToken = jwt.sign(payload, config.jwt.secret, {
       expiresIn: config.jwt.expiresIn,

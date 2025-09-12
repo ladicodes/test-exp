@@ -23,16 +23,6 @@ export class ProfileController {
     }
   }
 
-  // Retrieve all profiles
-  async getAllProfiles(req: Request, res: Response): Promise<Response> {
-    try {
-      const profiles = await this.profileService.getAllProfiles();
-      return ResponseUtil.success(res, profiles, "Profiles retrieved successfully");
-    } catch (error) {
-      return ResponseUtil.error(res, "Error retrieving profiles", 500, error);
-    }
-  }
-
   // Retrieve a profile by its ID
   async getProfileById(req: Request, res: Response): Promise<Response> {
     const profileId = req.params.id;

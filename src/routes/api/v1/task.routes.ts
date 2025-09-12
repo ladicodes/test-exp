@@ -9,9 +9,9 @@ import {
 } from "../../../entities/tasks/dto/create-task.dto";
 import {
   instructorAuthMiddleware,
-  authMiddleware, authenticateAndAuthorize,
+  authMiddleware,
 } from "../../../middleware/auth.middleware";
-import {User, UserRole} from "../../../entities/user/user.entity";
+import { User } from "../../../entities/user/user.entity";
 
 const router = express.Router();
 
@@ -22,39 +22,39 @@ const taskController = new TaskController(
 
 router.post(
   "/",
-    authenticateAndAuthorize(),
+  authMiddleware,
   validateBody(CreateTaskDto),
   taskController.createTask.bind(taskController)
 );
 
 router.get(
   "/",
-    authenticateAndAuthorize(),
+  authMiddleware,
   taskController.getAllTasks.bind(taskController)
 );
 
 router.get(
   "/user",
-    authenticateAndAuthorize(),
+  authMiddleware,
   taskController.getUserTasks.bind(taskController)
 );
 
 router.get(
   "/:id",
-  authenticateAndAuthorize(),
+  authMiddleware,
   taskController.getTaskById.bind(taskController)
 );
 
 router.put(
   "/:id",
-    authenticateAndAuthorize(),
+  authMiddleware,
   validateBody(UpdateTaskDto),
   taskController.updateTask.bind(taskController)
 );
 
 router.delete(
   "/:id",
-    authenticateAndAuthorize(),
+  authMiddleware,
   taskController.deleteTask.bind(taskController)
 );
 
