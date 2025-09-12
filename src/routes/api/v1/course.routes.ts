@@ -1,12 +1,15 @@
 import express from "express";
-import {CourseController} from "../../../controllers/course/course.controller";
-import {AppDataSource} from "../../../utils/data-source";
-import {validateBody} from "../../../middleware/validate.middleware";
-import {authenticateAndAuthorize, authMiddleware, instructorAuthMiddleware,} from "../../../middleware/auth.middleware";
-import {Course} from "../../../entities/course/course.entity";
-import {User, UserRole} from "../../../entities/user/user.entity";
-import {CreateCourseDto} from "../../../entities/course/dto/create-course.dto";
-import {UpdateCourseDto} from "../../../entities/course/dto/update-course.dto";
+import { CourseController } from "../../../controllers/course/course.controller";
+import { AppDataSource } from "../../../utils/data-source";
+import { validateBody } from "../../../middleware/validate.middleware";
+import {
+  instructorAuthMiddleware,
+  authMiddleware,
+} from "../../../middleware/auth.middleware";
+import { Course } from "../../../entities/course/course.entity";
+import { User } from "../../../entities/user/user.entity";
+import { CreateCourseDto } from "../../../entities/course/dto/create-course.dto";
+import { UpdateCourseDto } from "../../../entities/course/dto/update-course.dto";
 
 const router = express.Router();
 
@@ -17,33 +20,33 @@ const courseController = new CourseController(
 
 router.post(
   "/",
-  authenticateAndAuthorize(UserRole.INSTRUCTOR),
+  instructorAuthMiddleware,
   validateBody(CreateCourseDto),
   courseController.createCourse.bind(courseController)
 );
 
 router.get(
   "/",
-  authenticateAndAuthorize(),
+  authMiddleware,
   courseController.getCourses.bind(courseController)
 );
 
 router.get(
   "/:id",
-    authenticateAndAuthorize(),
+  authMiddleware,
   courseController.getCourseById.bind(courseController)
 );
 
 router.put(
   "/:id",
-    authenticateAndAuthorize(UserRole.INSTRUCTOR),
+  instructorAuthMiddleware,
   validateBody(UpdateCourseDto),
   courseController.updateCourse.bind(courseController)
 );
 
 router.delete(
   "/:id",
-    authenticateAndAuthorize(UserRole.INSTRUCTOR),
+  instructorAuthMiddleware,
   courseController.deleteCourse.bind(courseController)
 );
 
