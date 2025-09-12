@@ -1553,6 +1553,134 @@
           }
         }
       }
+    },
+    "/v1/leaderboard": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get leaderboard rankings",
+        "description": "Retrieve leaderboard rankings for mentees with various filters",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Leaderboard category",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["attendance", "course_progress", "projects_completed", "overall"],
+              "default": "overall"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query", 
+            "description": "Time period for rankings",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["week", "month", "all_time"],
+              "default": "all_time"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of entries to return",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leaderboard retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "Leaderboard retrieved successfully"},
+                    "data": {"$ref": "#/components/schemas/LeaderboardResponse"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          }
+        }
+      }
+    },
+    "/v1/leaderboard/my-ranking": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get current user's ranking",
+        "description": "Retrieve the authenticated user's position in the leaderboard",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "category", 
+            "in": "query",
+            "description": "Leaderboard category",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["attendance", "course_progress", "projects_completed", "overall"],
+              "default": "overall"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "description": "Time period for rankings", 
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["week", "month", "all_time"],
+              "default": "all_time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User ranking retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "User ranking retrieved successfully"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userRanking": {"$ref": "#/components/schemas/LeaderboardEntry"},
+                        "totalEntries": {"type": "integer", "example": 150}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "404": {
+            "description": "User not found in leaderboard"
+          }
+        }
+      }
     }
   },
 
@@ -1816,6 +1944,89 @@
             "example": "2024-01-15T10:30:00Z"
           }
         }
+      },
+      "LeaderboardResponse": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["attendance", "course_progress", "projects_completed", "overall"],
+            "example": "overall"
+          },
+          "period": {
+            "type": "string",
+            "enum": ["week", "month", "all_time"],
+            "example": "all_time"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LeaderboardEntry"
+            }
+          },
+          "totalEntries": {
+            "type": "integer",
+            "example": 45
+          }
+        }
+      },
+      "LeaderboardEntry": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "profilePicture": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/avatar.jpg"
+          },
+          "score": {
+            "type": "number",
+            "example": 85
+          },
+          "rank": {
+            "type": "integer",
+            "example": 3
+          },
+          "previousRank": {
+            "type": "integer",
+            "nullable": true,
+            "example": 5,
+            "description": "Previous rank for comparison (null if no previous data)"
+          },
+          "rankChange": {
+            "type": "integer",
+            "nullable": true,
+            "example": 2,
+            "description": "Rank change from previous period (positive = improvement, negative = decline)"
+          },
+          "attendanceSessions": {
+            "type": "integer",
+            "example": 12,
+            "description": "Number of sessions attended"
+          },
+          "courseProgress": {
+            "type": "number",
+            "example": 8,
+            "description": "Course progress score"
+          },
+          "projectsCompleted": {
+            "type": "integer",
+            "example": 5,
+            "description": "Number of completed projects/tasks"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -1839,6 +2050,10 @@
     {
       "name": "Admin",
       "description": "Administrative endpoints for managing users, diary entries, and system statistics. Requires admin privileges."
+    },
+    {
+      "name": "Leaderboard",
+      "description": "Leaderboard endpoints for mentee rankings and statistics. Includes attendance, course progress, projects completed, and overall rankings."
     }
   ]
 }
