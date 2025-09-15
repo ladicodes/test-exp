@@ -10,6 +10,9 @@ export const dataSourceOptions: DataSourceOptions = {
   password: config.database.password,
   database: config.database.name,
   synchronize: config.database.synchronize,
+    ssl: {
+        rejectUnauthorized: false,
+    },
   // logging: true,
   entities,
   ...(config.nodeEnv === "development"

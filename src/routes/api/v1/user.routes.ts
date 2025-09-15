@@ -16,7 +16,7 @@ router.get(
 );
 
 router.get(
-    "/user",
+    "/info",
     authenticateAndAuthorize(),
     userController.getUserInfo.bind(userController)
 );
@@ -26,9 +26,8 @@ router.get(
     authenticateAndAuthorize(),
     userController.getUsersByRole.bind(userController)
 );
-
-router.put(
-    "/:id",
+router.patch(
+    "/info",
     authenticateAndAuthorize(),
     userController.updateUser.bind(userController)
 );
@@ -43,6 +42,14 @@ router.get(
     "/:id",
     authenticateAndAuthorize(),
     userController.getUserById.bind(userController)
+);
+
+
+router.patch(
+    "/profile-picture",
+    authenticateAndAuthorize(),
+    userController.getProfilePictureUpload(),
+    userController.updateProfilePicture.bind(userController)
 );
 
 export default router;
