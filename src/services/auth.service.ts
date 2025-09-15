@@ -10,14 +10,15 @@ import { Request } from "express";
 import { config } from "../config";
 import ms from "ms";
 import { ResetPasswordDTO } from "../controllers/auth/dto/auth.dto";
+import {JWTPayload} from "../middleware/auth.middleware";
 
 export class AuthService {
   private readonly userRepository: Repository<User>;
   private readonly otpRepository: Repository<Otp>;
 
   constructor(
-    userRepository: Repository<User>,
-    otpRepository: Repository<Otp>
+      userRepository: Repository<User>,
+      otpRepository: Repository<Otp>
   ) {
     this.userRepository = userRepository;
     this.otpRepository = otpRepository;
@@ -28,7 +29,7 @@ export class AuthService {
     for (const user of users) {
       if (!user.serialNumber) {
         user.serialNumber = `SN-${new Date().getFullYear()}-${Math.floor(
-          Math.random() * 1000
+            Math.random() * 1000
         )}`;
         await this.userRepository.save(user);
       }
@@ -54,9 +55,9 @@ export class AuthService {
   }
 
   async verifyOtp(
-    email: string,
-    otp: string,
-    isOther = false
+      email: string,
+      otp: string,
+      isOther = false
   ): Promise<boolean> {
     const otpRecord = await this.otpRepository.findOne({
       where: { email, otp },
@@ -83,8 +84,8 @@ export class AuthService {
   }
 
   async login(
-    email: string,
-    password: string
+      email: string,
+      password: string
   ): Promise<{ error?: string; data?: any }> {
     const user = await this.userRepository.findOneBy({ email });
 
@@ -97,7 +98,11 @@ export class AuthService {
 
     const { password: _, ...userData } = user;
 
-    const payload = userData;
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    } as JWTPayload;
 
     const accessToken = jwt.sign(payload, config.jwt.secret, {
       expiresIn: config.jwt.expiresIn,
@@ -147,19 +152,19 @@ export class AuthService {
     const expiresAt = new Date(ms("24h"));
 
     await emailService
-      .sendPasswordResetEmail(email, {
-        name: user.firstName,
-        otp,
-      })
-      .then(async () => {
-        await this.otpRepository.save({ email, otp, expiresAt });
-      });
+        .sendPasswordResetEmail(email, {
+          name: user.firstName,
+          otp,
+        })
+        .then(async () => {
+          await this.otpRepository.save({ email, otp, expiresAt });
+        });
 
     return otp;
   }
 
   async resetPassword(
-    body: ResetPasswordDTO
+      body: ResetPasswordDTO
   ): Promise<{ error?: string; data?: string }> {
     const { email, otp, newPassword } = body;
 
@@ -191,16 +196,16 @@ export class AuthService {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await emailService
-      .sendEmailConfirmation(body.email, {
-        name: body.firstName,
-        email: body.email,
-        otp,
-        // 24 hours expiration time
-        expirationTime: format(expiresAt, "yyyy-MM-dd HH:mm:ss"),
-      })
-      .then(async () => {
-        await this.otpRepository.save({ email: body.email, otp, expiresAt });
-      });
+        .sendEmailConfirmation(body.email, {
+          name: body.firstName,
+          email: body.email,
+          otp,
+          // 24 hours expiration time
+          expirationTime: format(expiresAt, "yyyy-MM-dd HH:mm:ss"),
+        })
+        .then(async () => {
+          await this.otpRepository.save({ email: body.email, otp, expiresAt });
+        });
 
     return otp;
   }

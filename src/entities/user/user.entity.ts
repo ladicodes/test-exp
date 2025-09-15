@@ -6,11 +6,13 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  ManyToOne,
   BeforeInsert,
 } from "typeorm";
 import { Task } from "../tasks/task.entity";
 import { Session } from "../session/session.entity";
 import { Course } from "../course/course.entity";
+import { Diary } from "../diary/diary.entity";
 
 export enum UserRole {
   ADMIN = "admin",
@@ -47,12 +49,6 @@ export class User {
 
   @Column()
   school: string;
-
-  @Column({ nullable: true })
-  department: string;
-
-  @Column({ nullable: true })
-  level: string;
 
   @Column({ nullable: true })
   serialNumber: string;
@@ -117,6 +113,17 @@ export class User {
   @OneToMany(() => Task, (task) => task.assignedBy)
   createdTasks: Task[];
 
+  // Mentor-Mentee relationships
+  @ManyToOne(() => User, (user) => user.mentees, { nullable: true })
+  mentor?: User;
+
+  @OneToMany(() => User, (user) => user.mentor)
+  mentees: User[];
+
+  // Diary entries created by this user
+  @OneToMany(() => Diary, (diary) => diary.user)
+  diaryEntries: Diary[];
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -126,7 +133,7 @@ export class User {
   @BeforeInsert()
   beforeInsertActions() {
     this.serialNumber = `SN-${new Date().getFullYear()}-${Math.floor(
-      Math.random() * 1000
+        Math.random() * 1000
     )}`;
   }
 }

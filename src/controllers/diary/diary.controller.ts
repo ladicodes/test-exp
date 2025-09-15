@@ -13,21 +13,30 @@ export class DiaryController {
 
   async createDiaryEntry(req: Request, res: Response): Promise<Response> {
     const diaryData = req.body;
+    // @ts-ignore
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return ResponseUtil.error(res, "User authentication required", 401);
+    }
 
     try {
-      const newEntry = await this.diaryService.createDiaryEntry(diaryData);
+      const newEntry = await this.diaryService.createDiaryEntry(diaryData, userId);
 
       return ResponseUtil.success(
-        res,
-        newEntry,
-        "Diary entry created successfully"
+          res,
+          newEntry,
+          "Diary entry created successfully"
       );
     } catch (error: any) {
+      if (error.message === "User not found") {
+        return ResponseUtil.error(res, "User not found", 404, error);
+      }
       return ResponseUtil.error(
-        res,
-        error.message || "Failed to create diary entry",
-        500,
-        error
+          res,
+          error.message || "Failed to create diary entry",
+          500,
+          error
       );
     }
   }
@@ -36,16 +45,16 @@ export class DiaryController {
     try {
       const entries = await this.diaryService.getDiaryEntries();
       return ResponseUtil.success(
-        res,
-        entries,
-        "Diary entries retrieved successfully"
+          res,
+          entries,
+          "Diary entries retrieved successfully"
       );
     } catch (error: any) {
       return ResponseUtil.error(
-        res,
-        error.message || "Failed to retrieve diary entries",
-        500,
-        error
+          res,
+          error.message || "Failed to retrieve diary entries",
+          500,
+          error
       );
     }
   }
@@ -56,20 +65,20 @@ export class DiaryController {
 
     try {
       const updatedEntry = await this.diaryService.updateDiaryEntry(
-        id,
-        diaryData
+          id,
+          diaryData
       );
       return ResponseUtil.success(
-        res,
-        updatedEntry,
-        "Diary entry updated successfully"
+          res,
+          updatedEntry,
+          "Diary entry updated successfully"
       );
     } catch (error: any) {
       return ResponseUtil.error(
-        res,
-        error.message || "Failed to update diary entry",
-        500,
-        error
+          res,
+          error.message || "Failed to update diary entry",
+          500,
+          error
       );
     }
   }
@@ -80,16 +89,16 @@ export class DiaryController {
     try {
       const result = await this.diaryService.deleteDiaryEntry(id);
       return ResponseUtil.success(
-        res,
-        result,
-        "Diary entry deleted successfully"
+          res,
+          result,
+          "Diary entry deleted successfully"
       );
     } catch (error: any) {
       return ResponseUtil.error(
-        res,
-        error.message || "Failed to delete diary entry",
-        500,
-        error
+          res,
+          error.message || "Failed to delete diary entry",
+          500,
+          error
       );
     }
   }

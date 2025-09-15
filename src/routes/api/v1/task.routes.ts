@@ -9,53 +9,53 @@ import {
 } from "../../../entities/tasks/dto/create-task.dto";
 import {
   instructorAuthMiddleware,
-  authMiddleware,
+  authMiddleware, authenticateAndAuthorize,
 } from "../../../middleware/auth.middleware";
-import { User } from "../../../entities/user/user.entity";
+import {User, UserRole} from "../../../entities/user/user.entity";
 
 const router = express.Router();
 
 const taskController = new TaskController(
-  AppDataSource.getRepository(Task),
-  AppDataSource.getRepository(User)
+    AppDataSource.getRepository(Task),
+    AppDataSource.getRepository(User)
 );
 
 router.post(
-  "/",
-  authMiddleware,
-  validateBody(CreateTaskDto),
-  taskController.createTask.bind(taskController)
+    "/",
+    authenticateAndAuthorize(),
+    validateBody(CreateTaskDto),
+    taskController.createTask.bind(taskController)
 );
 
 router.get(
-  "/",
-  authMiddleware,
-  taskController.getAllTasks.bind(taskController)
+    "/",
+    authenticateAndAuthorize(),
+    taskController.getAllTasks.bind(taskController)
 );
 
 router.get(
-  "/user",
-  authMiddleware,
-  taskController.getUserTasks.bind(taskController)
+    "/user",
+    authenticateAndAuthorize(),
+    taskController.getUserTasks.bind(taskController)
 );
 
 router.get(
-  "/:id",
-  authMiddleware,
-  taskController.getTaskById.bind(taskController)
+    "/:id",
+    authenticateAndAuthorize(),
+    taskController.getTaskById.bind(taskController)
 );
 
 router.put(
-  "/:id",
-  authMiddleware,
-  validateBody(UpdateTaskDto),
-  taskController.updateTask.bind(taskController)
+    "/:id",
+    authenticateAndAuthorize(),
+    validateBody(UpdateTaskDto),
+    taskController.updateTask.bind(taskController)
 );
 
 router.delete(
-  "/:id",
-  authMiddleware,
-  taskController.deleteTask.bind(taskController)
+    "/:id",
+    authenticateAndAuthorize(),
+    taskController.deleteTask.bind(taskController)
 );
 
 export default router;
