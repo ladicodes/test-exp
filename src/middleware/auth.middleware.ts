@@ -50,8 +50,9 @@ export const authenticateAndAuthorize = (...allowedRoles: UserRole[]) => {
       return ResponseUtil.error(res, "Unauthorized", 401);
     }
 
+
     if (allowedRoles.length > 0 && !allowedRoles.includes(payload.role)) {
-      return ResponseUtil.error(res, "Forbidden", 403);
+      return ResponseUtil.error(res, "you do not have the required access", 403);
     }
 
     const user = {

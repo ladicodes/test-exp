@@ -6,6 +6,7 @@ import { Course } from "../../entities/course/course.entity";
 import { User, UserRole } from "../../entities/user/user.entity";
 import { Diary } from "../../entities/diary/diary.entity";
 import { Task } from "../../entities/tasks/task.entity";
+import { Session } from "../../entities/session/session.entity";
 
 export class AdminController {
     private readonly adminService: AdminService;
@@ -14,9 +15,10 @@ export class AdminController {
         courseRepository: Repository<Course>,
         userRepository: Repository<User>,
         diaryRepository: Repository<Diary>,
-        taskRepository: Repository<Task>
+        taskRepository: Repository<Task>,
+        sessionRepository: Repository<Session>
     ) {
-        this.adminService = new AdminService(courseRepository, userRepository, diaryRepository, taskRepository);
+        this.adminService = new AdminService(courseRepository, userRepository, diaryRepository, taskRepository, sessionRepository);
     }
 
 

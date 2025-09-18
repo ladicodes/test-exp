@@ -1022,7 +1022,7 @@
         "summary": "Get admin dashboard stats",
         "tags": ["Admin"],
         "security": [{ "bearerAuth": [] }],
-        "description": "Get statistics for mentees, mentors, tasks, and diary entries. Only accessible by admin users.",
+        "description": "Get statistics for active users, sessions today, diary entries today, and ongoing projects. Only accessible by admin users.",
         "responses": {
           "200": {
             "description": "Dashboard stats retrieved successfully",
@@ -1038,21 +1038,25 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "mentees": {
+                        "activeUsers": {
                           "type": "number",
-                          "example": 45
+                          "description": "Total number of active users in the system",
+                          "example": 157
                         },
-                        "mentors": {
+                        "sessionsToday": {
                           "type": "number",
-                          "example": 12
+                          "description": "Number of learning sessions created today",
+                          "example": 23
                         },
-                        "tasks": {
+                        "diaryEntriesToday": {
                           "type": "number",
-                          "example": 128
+                          "description": "Number of diary entries created today",
+                          "example": 18
                         },
-                        "diaryEntries": {
+                        "ongoingProjects": {
                           "type": "number",
-                          "example": 89
+                          "description": "Number of tasks currently in progress",
+                          "example": 42
                         }
                       }
                     },

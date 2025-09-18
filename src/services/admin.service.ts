@@ -1,42 +1,63 @@
-import { Repository } from "typeorm";
+import { Repository, Between } from "typeorm";
 import { Course } from "../entities/course/course.entity";
 import { User, UserRole } from "../entities/user/user.entity";
 import { CreateCourseDto } from "../entities/course/dto/create-course.dto";
 import { UpdateCourseDto } from "../entities/course/dto/update-course.dto";
 import { Diary } from "../entities/diary/diary.entity";
-import { Task } from "../entities/tasks/task.entity";
+import { Task, TaskStatus } from "../entities/tasks/task.entity";
+import { Session } from "../entities/session/session.entity";
 
 export class AdminService {
     private readonly courseRepository: Repository<Course>;
     private readonly userRepository: Repository<User>;
     private readonly diaryRepository: Repository<Diary>;
     private readonly taskRepository: Repository<Task>;
+    private readonly sessionRepository: Repository<Session>;
 
     constructor(
         courseRepository: Repository<Course>,
         userRepository: Repository<User>,
         diaryRepository: Repository<Diary>,
-        taskRepository: Repository<Task>
+        taskRepository: Repository<Task>,
+        sessionRepository: Repository<Session>
     ) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.diaryRepository = diaryRepository;
         this.taskRepository = taskRepository;
+        this.sessionRepository = sessionRepository;
     }
 
     async getDashboardStats() {
-        const [menteeCount, mentorCount, taskCount, diaryCount] = await Promise.all([
-            this.userRepository.count({ where: { role: UserRole.STUDENT } }),
-            this.userRepository.count({ where: { role: UserRole.INSTRUCTOR } }),
-            this.taskRepository.count(),
-            this.diaryRepository.count()
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(today);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const [activeUsersCount, sessionsToday, diaryEntriesToday, ongoingProjects] = await Promise.all([
+            this.userRepository.count(),
+            this.sessionRepository.count({
+                where: {
+                    createdAt: Between(today, endOfDay)
+                }
+            }),
+            this.diaryRepository.count({
+                where: {
+                    createdAt: Between(today, endOfDay)
+                }
+            }),
+            this.taskRepository.count({
+                where: {
+                    status: TaskStatus.IN_PROGRESS
+                }
+            })
         ]);
 
         return {
-            mentees: menteeCount,
-            mentors: mentorCount,
-            tasks: taskCount,
-            diaryEntries: diaryCount
+            activeUsers: activeUsersCount,
+            sessionsToday,
+            diaryEntriesToday,
+            ongoingProjects
         };
     }
 
