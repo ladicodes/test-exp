@@ -1685,6 +1685,227 @@
           }
         }
       }
+    },
+
+    "/v1/diary": {
+      "post": {
+        "tags": ["Diary"],
+        "summary": "Create a new diary entry",
+        "description": "Create a new diary entry for the authenticated user",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDiaryEntryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Diary entry created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DiaryEntry"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entry created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized - User authentication required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Diary"],
+        "summary": "Get all diary entries",
+        "description": "Retrieve all diary entries in the system (admin functionality)",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Diary entries retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DiaryEntry"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entries retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/v1/diary/{id}": {
+      "put": {
+        "tags": ["Diary"],
+        "summary": "Update a diary entry",
+        "description": "Update an existing diary entry by ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the diary entry to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDiaryEntryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Diary entry updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DiaryEntry"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entry updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "404": {
+            "description": "Diary entry not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Diary"],
+        "summary": "Delete a diary entry",
+        "description": "Delete an existing diary entry by ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the diary entry to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary entry deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Diary entry deleted successfully"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entry deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "404": {
+            "description": "Diary entry not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
     }
   },
 
@@ -2031,6 +2252,128 @@
             "description": "Number of completed projects/tasks"
           }
         }
+      },
+      "DiaryEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d1e2f3a4-b5c6-4789-a012-b3c4d5e6f789"
+          },
+          "title": {
+            "type": "string",
+            "example": "My Learning Journey Today"
+          },
+          "whatWorkOn": {
+            "type": "string",
+            "example": "Working on React hooks and state management"
+          },
+          "whatLearned": {
+            "type": "string",
+            "example": "Learned about useState and useEffect hooks"
+          },
+          "whatCouldBeBetter": {
+            "type": "string",
+            "example": "Could improve understanding of useContext"
+          },
+          "howItFeels": {
+            "type": "string",
+            "example": "Feeling confident about the progress made"
+          },
+          "goalsForNextTime": {
+            "type": "string",
+            "example": "Focus on learning useReducer and custom hooks"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      },
+      "CreateDiaryEntryDto": {
+        "type": "object",
+        "required": [
+          "title",
+          "whatWorkOn",
+          "whatLearned",
+          "whatCouldBeBetter",
+          "howItFeels",
+          "goalsForNextTime"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the diary entry",
+            "example": "My Learning Journey Today"
+          },
+          "whatWorkOn": {
+            "type": "string",
+            "description": "What the user worked on during this session",
+            "example": "Working on React hooks and state management"
+          },
+          "whatLearned": {
+            "type": "string",
+            "description": "What the user learned during this session",
+            "example": "Learned about useState and useEffect hooks"
+          },
+          "whatCouldBeBetter": {
+            "type": "string",
+            "description": "What could be improved in the next session",
+            "example": "Could improve understanding of useContext"
+          },
+          "howItFeels": {
+            "type": "string",
+            "description": "How the user feels about their progress",
+            "example": "Feeling confident about the progress made"
+          },
+          "goalsForNextTime": {
+            "type": "string",
+            "description": "Goals for the next learning session",
+            "example": "Focus on learning useReducer and custom hooks"
+          }
+        }
+      },
+      "UpdateDiaryEntryDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the diary entry",
+            "example": "My Updated Learning Journey"
+          },
+          "whatWorkOn": {
+            "type": "string",
+            "description": "What the user worked on during this session",
+            "example": "Working on advanced React patterns"
+          },
+          "whatLearned": {
+            "type": "string",
+            "description": "What the user learned during this session",
+            "example": "Learned about useReducer and custom hooks"
+          },
+          "whatCouldBeBetter": {
+            "type": "string",
+            "description": "What could be improved in the next session",
+            "example": "Could improve understanding of React performance optimization"
+          },
+          "howItFeels": {
+            "type": "string",
+            "description": "How the user feels about their progress",
+            "example": "Feeling more confident with advanced concepts"
+          },
+          "goalsForNextTime": {
+            "type": "string",
+            "description": "Goals for the next learning session",
+            "example": "Focus on React performance optimization and testing"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -2058,6 +2401,10 @@
     {
       "name": "Leaderboard",
       "description": "Leaderboard endpoints for mentee rankings and statistics. Includes attendance, course progress, projects completed, and overall rankings."
+    },
+    {
+      "name": "Diary",
+      "description": "Diary endpoints for creating, reading, updating, and deleting learning diary entries. Users can track their daily learning progress and reflections."
     }
   ]
 }
