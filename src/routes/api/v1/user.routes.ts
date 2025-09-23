@@ -11,7 +11,7 @@ const userController = new UserController(userRepository);
 
 router.get(
     "/",
-    authenticateAndAuthorize(UserRole.ADMIN),
+    authenticateAndAuthorize(),
     userController.getAllUsers.bind(userController)
 );
 
