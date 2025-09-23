@@ -38,8 +38,13 @@ export class AuthService {
   }
 
   async register(body: CreateUserDTO) {
+
+    let {email} = body;
+    email = email.toLowerCase();
+
+
     const existingUser = await this.userRepository.findOne({
-      where: [{ email: body.email }, { phoneNumber: body.phoneNumber }],
+      where: [{ email: email }, { phoneNumber: body.phoneNumber }],
     });
 
     if (existingUser) throw new Error("User already exists");

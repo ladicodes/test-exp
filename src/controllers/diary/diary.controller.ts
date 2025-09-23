@@ -45,6 +45,7 @@ export class DiaryController {
 
 
     try {
+      // @ts-ignore
       const user = req.user?.id as string
       const entries = await this.diaryService.getDiaryEntries(user);
       return ResponseUtil.success(
