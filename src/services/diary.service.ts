@@ -27,8 +27,8 @@ export class DiaryService {
     return this.diaryRepository.save(diaryEntry);
   }
 
-  async getDiaryEntries() {
-    return this.diaryRepository.find();
+  async getDiaryEntries(userId?: string) {
+    return this.diaryRepository.find({where:{user:{id:userId}}});
   }
 
   async updateDiaryEntry(id: string, body: any) {

@@ -42,8 +42,11 @@ export class DiaryController {
   }
 
   async getDiaryEntries(req: Request, res: Response): Promise<Response> {
+
+
     try {
-      const entries = await this.diaryService.getDiaryEntries();
+      const user = req.user?.id as string
+      const entries = await this.diaryService.getDiaryEntries(user);
       return ResponseUtil.success(
           res,
           entries,
