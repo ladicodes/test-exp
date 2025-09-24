@@ -30,6 +30,18 @@ export enum SessionCategory {
   AGILE_METHODOLOGIES = "Agile Methodologies",
 }
 
+export enum SessionType {
+  REGULAR = "regular",
+  MENTORING = "mentoring",
+}
+
+export enum SessionStatus {
+  PENDING = "pending",
+  CONFIRMED = "confirmed",
+  CANCELLED = "cancelled",
+  COMPLETED = "completed",
+}
+
 @Entity({ name: "sessions" })
 export class Session {
   @PrimaryGeneratedColumn("uuid")
@@ -44,6 +56,20 @@ export class Session {
   })
   category: SessionCategory;
 
+  @Column({
+    type: "enum",
+    enum: SessionType,
+    default: SessionType.REGULAR,
+  })
+  type: SessionType;
+
+  @Column({
+    type: "enum",
+    enum: SessionStatus,
+    default: SessionStatus.PENDING,
+  })
+  status: SessionStatus;
+
   @Column({ type: "timestamp" })
   startTime: Date;
 
@@ -53,8 +79,27 @@ export class Session {
   @Column({ type: "text", nullable: true })
   description?: string;
 
-  @ManyToOne(() => User, (user) => user.sessions, { onDelete: "CASCADE" })
+  // For mentoring sessions - the student who requested the session
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
   user: User;
+
+  // For mentoring sessions - the mentor
+  @ManyToOne(() => User, { nullable: true, onDelete: "CASCADE" })
+  mentor?: User;
+
+  // Meeting details
+  @Column({ nullable: true })
+  meetingLink?: string;
+
+  @Column({ type: "text", nullable: true })
+  agenda?: string;
+
+  // Confirmation details
+  @Column({ type: "timestamp", nullable: true })
+  confirmedAt?: Date;
+
+  @Column({ type: "text", nullable: true })
+  cancellationReason?: string;
 
   @CreateDateColumn()
   createdAt: Date;

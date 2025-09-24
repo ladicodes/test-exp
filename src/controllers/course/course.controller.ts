@@ -20,8 +20,8 @@ export class CourseController {
   async createCourse(req: Request, res: Response) {
     const body: CreateCourseDto = req.body;
     try {
-      // @ts-ignore
       const course = await this.courseService.createCourse({
+        // @ts-ignore
         user: req.user,
         body,
       });

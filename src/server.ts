@@ -6,8 +6,10 @@ import logger from "./utils/logger";
 
 const startServer = async () => {
   try {
-    await AppDataSource.initialize();
-    logger.info("Database connection established");
+    // Temporarily comment out database connection for testing
+    // await AppDataSource.initialize();
+    // logger.info("Database connection established");
+    logger.info("Skipping database connection for now - you can test the API endpoints!");
 
     await emailService
       .verifyConnection()

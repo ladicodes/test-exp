@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Cancelled</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+        .session-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc3545; }
+        .button { display: inline-block; background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 5px; }
+        .footer { text-align: center; margin-top: 30px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>❌ Session Cancelled</h1>
+        </div>
+        <div class="content">
+            <p>Hello <strong><%= participantName %></strong>,</p>
+            
+            <p>We're sorry to inform you that your mentoring session has been cancelled.</p>
+            
+            <div class="session-details">
+                <h3>📋 Cancelled Session Details</h3>
+                <p><strong>Title:</strong> <%= sessionTitle %></p>
+                <p><strong>Category:</strong> <%= sessionCategory %></p>
+                <p><strong>Originally Scheduled:</strong> <%= startTime %></p>
+                <p><strong><%= isStudent ? 'Mentor' : 'Student' %>:</strong> <%= otherParticipantName %></p>
+                <p><strong>Status:</strong> ❌ Cancelled</p>
+                <% if (cancellationReason) { %>
+                <p><strong>Reason:</strong> <%= cancellationReason %></p>
+                <% } %>
+            </div>
+            
+            <p><strong>What's Next?</strong></p>
+            <ul>
+                <li>You can schedule a new session at a different time</li>
+                <li>Reach out to your <%= isStudent ? 'mentor' : 'student' %> to discuss alternative arrangements</li>
+                <li>Contact our support team if you need assistance</li>
+            </ul>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="<%= dashboardUrl %>" class="button">Visit Dashboard</a>
+            </div>
+            
+            <div class="footer">
+                <p>Best regards,<br>SquadCo Hackademy Team</p>
+                <p><small>We're here to help you continue your learning journey.</small></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
