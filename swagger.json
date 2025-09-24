@@ -1906,6 +1906,361 @@
           }
         }
       }
+    },
+
+    "/v1/sessions/mentoring/schedule": {
+      "post": {
+        "tags": ["Mentoring Sessions"],
+        "summary": "Schedule a new mentoring session",
+        "description": "Allow students to schedule mentoring sessions with their assigned mentors. Sends email notifications to both mentor and student.",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleMentoringSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mentoring session scheduled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/MentoringSession"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mentoring session scheduled successfully. Email notifications sent."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data or validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mentor is not available at the selected time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "description": "Forbidden - Only students can schedule mentoring sessions"
+          },
+          "404": {
+            "description": "Mentor not found or not assigned to student"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+
+    "/v1/sessions/mentoring/{sessionId}/confirm": {
+      "put": {
+        "tags": ["Mentoring Sessions"],
+        "summary": "Confirm a mentoring session",
+        "description": "Allow mentors to confirm scheduled mentoring sessions. Updates session status and sends confirmation emails.",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the session to confirm"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "meetingLink": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Video conference link for the session",
+                    "example": "https://meet.google.com/xyz-abc-def"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session confirmed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/MentoringSession"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Session confirmed successfully. Confirmation emails sent."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Session already confirmed or invalid state"
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "description": "Forbidden - Only the assigned mentor can confirm sessions"
+          },
+          "404": {
+            "description": "Session not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+
+    "/v1/sessions/mentoring": {
+      "get": {
+        "tags": ["Mentoring Sessions"],
+        "summary": "Get user's mentoring sessions",
+        "description": "Retrieve all mentoring sessions for the authenticated user (as student or mentor)",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["pending", "confirmed", "cancelled", "completed"]
+            },
+            "description": "Filter sessions by status"
+          },
+          {
+            "name": "upcoming",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Filter for upcoming sessions only"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Number of sessions to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "description": "Number of sessions to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mentoring sessions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "sessions": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/MentoringSession"
+                          }
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 15
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 20
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Mentoring sessions retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+
+    "/v1/sessions/mentoring/pending": {
+      "get": {
+        "tags": ["Mentoring Sessions"],
+        "summary": "Get pending mentoring sessions for mentor",
+        "description": "Retrieve all pending mentoring sessions that need mentor confirmation. Only accessible by mentors.",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Pending sessions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MentoringSession"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Pending sessions retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "description": "Forbidden - Only mentors can access pending sessions"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+
+    "/v1/sessions/{sessionId}/confirm": {
+      "get": {
+        "tags": ["Mentoring Sessions"],
+        "summary": "Email confirmation link handler",
+        "description": "Handle email confirmation links for mentoring sessions. Redirects to appropriate confirmation page.",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the session to confirm"
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Confirmation token from email"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["mentor", "student"]
+            },
+            "description": "Type of confirmation (mentor or student)"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to confirmation page"
+          },
+          "400": {
+            "description": "Invalid or expired confirmation token"
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        }
+      }
     }
   },
 
@@ -2374,6 +2729,179 @@
             "example": "Focus on React performance optimization and testing"
           }
         }
+      },
+      "ScheduleMentoringSessionDto": {
+        "type": "object",
+        "required": ["mentorId", "scheduledDate", "startTime", "endTime", "agenda"],
+        "properties": {
+          "mentorId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the mentor to schedule session with",
+            "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+          },
+          "scheduledDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the mentoring session (YYYY-MM-DD)",
+            "example": "2025-09-30"
+          },
+          "startTime": {
+            "type": "string",
+            "pattern": "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$",
+            "description": "Start time in HH:MM format (24-hour)",
+            "example": "14:30"
+          },
+          "endTime": {
+            "type": "string",
+            "pattern": "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$",
+            "description": "End time in HH:MM format (24-hour)",
+            "example": "15:30"
+          },
+          "agenda": {
+            "type": "string",
+            "description": "Main topic/agenda for the mentoring session",
+            "example": "Review React project and discuss next steps"
+          },
+          "additionalNotes": {
+            "type": "string",
+            "description": "Additional notes or specific questions for the mentor",
+            "example": "Need help with state management and API integration"
+          }
+        }
+      },
+      "MentoringSession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f1e2d3c4-b5a6-4789-a012-b3c4d5e6f789"
+          },
+          "title": {
+            "type": "string",
+            "example": "Mentoring Session with Sarah Johnson"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["regular", "mentoring"],
+            "example": "mentoring"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "confirmed", "cancelled", "completed"],
+            "example": "confirmed"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop", "General Mentoring"],
+            "example": "General Mentoring"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-30T14:30:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-30T15:30:00Z"
+          },
+          "description": {
+            "type": "string",
+            "example": "Review React project and discuss next steps"
+          },
+          "agenda": {
+            "type": "string",
+            "example": "Review React project and discuss next steps"
+          },
+          "additionalNotes": {
+            "type": "string",
+            "nullable": true,
+            "example": "Need help with state management and API integration"
+          },
+          "meetingLink": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "example": "https://meet.google.com/xyz-abc-def"
+          },
+          "confirmedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2025-09-25T10:15:00Z"
+          },
+          "cancellationReason": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+              },
+              "firstName": {
+                "type": "string",
+                "example": "John"
+              },
+              "lastName": {
+                "type": "string",
+                "example": "Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "john.doe@example.com"
+              },
+              "role": {
+                "type": "string",
+                "example": "student"
+              }
+            }
+          },
+          "mentor": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+              },
+              "firstName": {
+                "type": "string",
+                "example": "Sarah"
+              },
+              "lastName": {
+                "type": "string",
+                "example": "Johnson"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "sarah.johnson@example.com"
+              },
+              "role": {
+                "type": "string",
+                "example": "instructor"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-24T08:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-25T10:15:00Z"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -2395,6 +2923,26 @@
       "description": "Miscellaneous endpoints"
     },
     {
+      "name": "Auth",
+      "description": "Authentication and authorization endpoints for user registration, login, and OTP verification."
+    },
+    {
+      "name": "User", 
+      "description": "User management endpoints for retrieving and updating user information."
+    },
+    {
+      "name": "Sessions",
+      "description": "General session management endpoints for creating, reading, updating, and deleting learning sessions."
+    },
+    {
+      "name": "Courses",
+      "description": "Course management endpoints for creating, reading, updating, and deleting courses."
+    },
+    {
+      "name": "Lessons",
+      "description": "Lesson management endpoints for creating, reading, updating, and deleting lessons within courses."
+    },
+    {
       "name": "Admin",
       "description": "Administrative endpoints for managing users, diary entries, and system statistics. Requires admin privileges."
     },
@@ -2405,6 +2953,10 @@
     {
       "name": "Diary",
       "description": "Diary endpoints for creating, reading, updating, and deleting learning diary entries. Users can track their daily learning progress and reflections."
+    },
+    {
+      "name": "Mentoring Sessions",
+      "description": "Mentoring session endpoints for scheduling, confirming, and managing mentoring sessions between students and instructors. Includes email notifications and session status management."
     }
   ]
 }
