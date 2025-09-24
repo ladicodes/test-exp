@@ -6,28 +6,16 @@ import logger from "./utils/logger";
 
 const startServer = async () => {
   try {
-    // Try to initialize database connection
-    try {
-      await AppDataSource.initialize();
-      logger.info("Database connection established successfully");
-    } catch (dbError) {
-      logger.error("Database connection failed:", dbError);
-      logger.warn("Server will start without database connection");
-      logger.warn("Some features may not work without database. To fix:");
-      logger.warn("1. Install PostgreSQL locally, or");
-      logger.warn("2. Use a cloud database (Neon, Supabase, Railway)");
-    }
+    await AppDataSource.initialize();
+    logger.info("Database connection established");
 
-    try {
-      const isEmailConnected = await emailService.verifyConnection();
-      if (isEmailConnected) {
-        logger.info("Email service connected successfully");
-      } else {
-        logger.warn("Email service connection failed - emails will not be sent");
-      }
-    } catch (error) {
-      logger.warn("Email service unavailable - continuing without email functionality", error);
-    }
+    await emailService
+      .verifyConnection()
+      .then((isConnected) =>
+        isConnected
+          ? logger.info("Email service connected successfully")
+          : logger.error("Failed to connect to email service")
+      );
 
     const server = app.listen(config.port, () => {
       logger.info(

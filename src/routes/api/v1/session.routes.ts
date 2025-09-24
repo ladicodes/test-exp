@@ -7,10 +7,6 @@ import {UpdateSessionDto} from "../../../entities/session/dto/update-session.dto
 import {authenticateAndAuthorize, instructorAuthMiddleware,} from "../../../middleware/auth.middleware";
 import {User, UserRole} from "../../../entities/user/user.entity";
 import {SessionController} from "../../../controllers/session/session.controller";
-import {
-  validateScheduleMentoringSession,
-  validateConfirmSession,
-} from "../../../validators/session.validator";
 
 const router = express.Router();
 
@@ -56,41 +52,5 @@ router.delete(
     sessionController.deleteSession.bind(sessionController)
 );
 
-// Mentoring session routes
-// Schedule a mentoring session (Students can request sessions with mentors)
-router.post(
-    "/mentoring/schedule",
-    authenticateAndAuthorize(UserRole.STUDENT),
-    validateScheduleMentoringSession,
-    sessionController.scheduleMentoringSession.bind(sessionController)
-);
-
-// Confirm or decline a mentoring session (Mentors only)
-router.put(
-    "/mentoring/:sessionId/confirm",
-    authenticateAndAuthorize(), // Any authenticated user, but service will validate mentor access
-    validateConfirmSession,
-    sessionController.confirmSession.bind(sessionController)
-);
-
-// Get mentoring sessions for current user (as student or mentor)
-router.get(
-    "/mentoring",
-    authenticateAndAuthorize(),
-    sessionController.getMentoringSessions.bind(sessionController)
-);
-
-// Get pending session requests for mentor
-router.get(
-    "/mentoring/pending",
-    authenticateAndAuthorize(),
-    sessionController.getPendingSessions.bind(sessionController)
-);
-
-// Public endpoint for email confirmation (no auth needed for email links)
-router.get(
-    "/:sessionId/confirm",
-    sessionController.handleEmailConfirmation.bind(sessionController)
-);
 
 export default router;
