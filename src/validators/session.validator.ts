@@ -3,31 +3,6 @@ import Joi from "joi";
 import { ResponseUtil } from "../utils/response";
 import { SessionCategory } from "../entities/session/session.entity";
 
-export const validateScheduleMentoringSession = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const schema = Joi.object({
-    title: Joi.string().min(3).max(255).required(),
-    category: Joi.string()
-      .valid(...Object.values(SessionCategory))
-      .required(),
-    startTime: Joi.date().iso().greater("now").required(),
-    endTime: Joi.date().iso().greater(Joi.ref("startTime")).optional(),
-    description: Joi.string().max(1000).optional(),
-    agenda: Joi.string().max(1000).optional(),
-    mentorId: Joi.string().uuid().required(),
-    meetingLink: Joi.string().uri().optional(),
-  });
-
-  const { error } = schema.validate(req.body);
-
-  if (error) return ResponseUtil.error(res, error.message, 400);
-
-  return next();
-};
-
 export const validateConfirmSession = (
   req: Request,
   res: Response,

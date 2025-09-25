@@ -113,13 +113,6 @@ export class User {
   @OneToMany(() => Task, (task) => task.assignedBy)
   createdTasks: Task[];
 
-  // Mentor-Mentee relationships
-  @ManyToOne(() => User, (user) => user.mentees, { nullable: true })
-  mentor?: User;
-
-  @OneToMany(() => User, (user) => user.mentor)
-  mentees: User[];
-
   // Diary entries created by this user
   @OneToMany(() => Diary, (diary) => diary.user)
   diaryEntries: Diary[];

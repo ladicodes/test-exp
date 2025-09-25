@@ -96,51 +96,6 @@ export class AdminService {
         return { message: "User permanently deleted" };
     }
 
-    async assignMentorToMentee(menteeId: string, mentorId: string) {
-        const [mentee, mentor] = await Promise.all([
-            this.userRepository.findOne({ where: { id: menteeId } }),
-            this.userRepository.findOne({ where: { id: mentorId } })
-        ]);
-
-        if (!mentee) {
-            throw new Error("Mentee not found");
-        }
-
-        if (!mentor) {
-            throw new Error("Mentor not found");
-        }
-
-        if (mentee.role !== UserRole.STUDENT) {
-            throw new Error("Mentee must be a student");
-        }
-
-        if (mentor.role !== UserRole.INSTRUCTOR) {
-            throw new Error("Mentor must be an instructor");
-        }
-
-        if (menteeId === mentorId) {
-            throw new Error("A user cannot be their own mentor");
-        }
-
-        mentee.mentor = mentor;
-        await this.userRepository.save(mentee);
-
-        return {
-            mentee: {
-                id: mentee.id,
-                firstName: mentee.firstName,
-                lastName: mentee.lastName,
-                email: mentee.email
-            },
-            mentor: {
-                id: mentor.id,
-                firstName: mentor.firstName,
-                lastName: mentor.lastName,
-                email: mentor.email
-            }
-        };
-    }
-
     async getAllDiaryEntries(userId?: string) {
         const queryBuilder = this.diaryRepository.createQueryBuilder("diary")
             .leftJoinAndSelect("diary.user", "user")
