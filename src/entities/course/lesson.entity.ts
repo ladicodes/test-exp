@@ -25,8 +25,9 @@ export class Lesson {
   @Column({ default: 0 })
   order: number;
 
-  @ManyToOne(() => Course, (course) => course.lessons, { onDelete: "CASCADE" })
-  course: Course;
+
+
+
 
   @CreateDateColumn()
   createdAt: Date;
