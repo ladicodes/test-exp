@@ -1,0 +1,1944 @@
+
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SquadCo Hackademy Backend API",
+    "version": "1.0.0",
+    "description": "This is the backend API for the SquadCo Hackademy project."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9000/api",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "tags": ["Utility"],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2023-10-01T12:00:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/v1/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "description": "Creates a new user account with the provided information",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "firstName",
+                  "lastName",
+                  "phoneNumber",
+                  "role",
+                  "password",
+                  "school"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address",
+                    "example": "user@example.com"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "User's first name",
+                    "example": "Benjamin"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "User's last name",
+                    "example": "Nkem"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "description": "User's phone number",
+                    "example": "08133961439"
+                  },
+                  "role": {
+                    "type": "string",
+                    "description": "User's role in the system",
+                    "example": "user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "User's password",
+                    "example": "securePassword123"
+                  },
+                  "school": {
+                    "type": "string",
+                    "description": "User's school/institution",
+                    "example": "Federal University of Agriculture, Abeokuta"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User registered successfully"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "64f5b2a1e8b3c7f2a1234567"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "benjaminnkemfrancis@gmail.com"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "example": "Benjamin"
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "example": "Nkem"
+                        },
+                        "phoneNumber": {
+                          "type": "string",
+                          "example": "08133961439"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "user"
+                        },
+                        "school": {
+                          "type": "string",
+                          "example": "Federal University of Agriculture, Abeokuta"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid email format"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Please provide a valid email address"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - User already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "User already exists"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "A user with this email already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "An unexpected error occurred"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/v1/auth/verify-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Verify OTP code",
+        "description": "Verifies the OTP code sent to the user's email address",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["otp", "email"],
+                "properties": {
+                  "otp": {
+                    "type": "string",
+                    "pattern": "^[0-9]{6}$",
+                    "description": "6-digit OTP code",
+                    "example": "123456"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address",
+                    "example": "user@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {}
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "OTP verified successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid OTP format"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "OTP must be a 6-digit number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or expired OTP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid OTP"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The OTP code is invalid or has expired"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "User not found"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No user found with the provided email address"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests - Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Too many attempts"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many OTP verification attempts. Please try again later"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "An unexpected error occurred"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "description": "Authenticates a user with email and password, returns user data and JWT tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address",
+                    "example": "sarah.johnson@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User's password",
+                    "minLength": 6,
+                    "example": "mySecurePassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "example": "Sarah"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "example": "Johnson"
+                            },
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "example": "sarah.johnson@example.com"
+                            },
+                            "phoneNumber": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": "08098765432"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": ["student", "teacher", "admin"],
+                              "example": "teacher"
+                            },
+                            "school": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": "Harvard University"
+                            },
+                            "profilePicture": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "bio": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "github": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "linkedin": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "twitter": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "website": {
+                              "type": "string",
+                              "nullable": true,
+                              "example": null
+                            },
+                            "dateOfBirth": {
+                              "type": "string",
+                              "format": "date",
+                              "nullable": true,
+                              "example": null
+                            }
+                          }
+                        },
+                        "tokens": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string",
+                              "description": "JWT access token",
+                              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImExYjJjM2Q0LWU1ZjYtNDc4OS1hMDEyLWIzYzRkNWU2Zjc4OSIsImZpcnN0TmFtZSI6IlNhcmFoIiwibGFzdE5hbWUiOiJKb2huc29uIiwidGl0bGUiOm51bGwsImFkZHJlc3MiOm51bGwsInBob25lTnVtYmVyIjoiMDgwOTg3NjU0MzIiLCJyb2xlIjoidGVhY2hlciIsImVtYWlsIjoic2FyYWguam9obnNvbkBleGFtcGxlLmNvbSIsInNjaG9vbCI6IkhhcnZhcmQgVW5pdmVyc2l0eSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJiaW8iOm51bGwsImdpdGh1YiI6bnVsbCwibGlua2VkaW4iOm51bGwsInR3aXR0ZXIiOm51bGwsIndlYnNpdGUiOm51bGwsImRhdGVPZkJpcnRoIjpudWxsLCJpc1ZlcmlmaWVkIjp0cnVlLCJkZWxldGVkQXQiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjhUMDk6MzA6MTUuMTIzWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjhUMTI6NDU6MjAuNDU2WiIsImlhdCI6MTc1MzcwMjMxNSwiZXhwIjoxNzU0MzA3MTE1fQ.Abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+                            },
+                            "refreshToken": {
+                              "type": "string",
+                              "description": "JWT refresh token",
+                              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImExYjJjM2Q0LWU1ZjYtNDc4OS1hMDEyLWIzYzRkNWU2Zjc4OSIsImZpcnN0TmFtZSI6IlNhcmFoIiwibGFzdE5hbWUiOiJKb2huc29uIiwidGl0bGUiOm51bGwsImFkZHJlc3MiOm51bGwsInBob25lTnVtYmVyIjoiMDgwOTg3NjU0MzIiLCJyb2xlIjoidGVhY2hlciIsImVtYWlsIjoic2FyYWguam9obnNvbkBleGFtcGxlLmNvbSIsInNjaG9vbCI6IkhhcnZhcmQgVW5pdmVyc2l0eSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJiaW8iOm51bGwsImdpdGh1YiI6bnVsbCwibGlua2VkaW4iOm51bGwsInR3aXR0ZXIiOm51bGwsIndlYnNpdGUiOm51bGwsImRhdGVPZkJpcnRoIjpudWxsLCJpc1ZlcmlmaWVkIjp0cnVlLCJkZWxldGVkQXQiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjUtMDctMjhUMDk6MzA6MTUuMTIzWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDctMjhUMTI6NDU6MjAuNDU2WiIsImlhdCI6MTc1MzcwMjMxNSwiZXhwIjoxNzU2Mjk0MzE1fQ.Xyz789abc012def345ghi678jkl901mno234pqr567stu890vwx"
+                            }
+                          }
+                        },
+                        "expiresIn": {
+                          "type": "number",
+                          "description": "Token expiration timestamp in milliseconds",
+                          "example": 1754307115123
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication successful"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid request data"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "email is required",
+                        "password must be at least 6 characters"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid email or password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Account not verified or suspended",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Account not verified. Please verify your email address"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests - Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many login attempts. Please try again later"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v1/users/user": {
+      "get": {
+        "summary": "Get user information",
+        "description": "Retrieve information about the authenticated user",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "User information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/sessions": {
+      "post": {
+        "summary": "Create a new session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session created successfully"
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all sessions",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter sessions by user ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Session" }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/sessions/{id}": {
+      "get": {
+        "summary": "Get session by ID",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Session" }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Session updated successfully" },
+          "400": { "description": "Invalid data" },
+          "404": { "description": "Session not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a session",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Session ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Session deleted successfully" },
+          "404": { "description": "Session not found" }
+        }
+      }
+    },
+
+    "/courses": {
+      "post": {
+        "summary": "Create a new course",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCourseDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Course created successfully" },
+          "400": { "description": "Validation error" },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "get": {
+        "summary": "Get all courses",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Courses fetched successfully" }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "get": {
+        "summary": "Get a course by ID",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Course fetched successfully" },
+          "404": { "description": "Course not found" }
+        }
+      },
+      "put": {
+        "summary": "Update a course",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCourseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Course updated successfully" },
+          "404": { "description": "Course not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a course",
+        "tags": ["Courses"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Course deleted successfully" },
+          "404": { "description": "Course not found" }
+        }
+      }
+    },
+    "/lessons/{courseId}": {
+      "post": {
+        "summary": "Create a lesson in a course",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateLessonDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Lesson created successfully" },
+          "404": { "description": "Course not found" }
+        }
+      }
+    },
+    "/lessons/course/{courseId}": {
+      "get": {
+        "summary": "Get lessons for a course",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lessons fetched successfully" }
+        }
+      }
+    },
+    "/lessons/{id}": {
+      "get": {
+        "summary": "Get a lesson by ID",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lesson fetched successfully" },
+          "404": { "description": "Lesson not found" }
+        }
+      },
+      "put": {
+        "summary": "Update a lesson",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateLessonDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Lesson updated successfully" },
+          "404": { "description": "Lesson not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a lesson",
+        "tags": ["Lessons"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lesson deleted successfully" },
+          "404": { "description": "Lesson not found" }
+        }
+      }
+    },
+
+    "/v1/admin/dashboard": {
+      "get": {
+        "summary": "Get admin dashboard stats",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get statistics for mentees, mentors, tasks, and diary entries. Only accessible by admin users.",
+        "responses": {
+          "200": {
+            "description": "Dashboard stats retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "mentees": {
+                          "type": "number",
+                          "example": 45
+                        },
+                        "mentors": {
+                          "type": "number",
+                          "example": 12
+                        },
+                        "tasks": {
+                          "type": "number",
+                          "example": 128
+                        },
+                        "diaryEntries": {
+                          "type": "number",
+                          "example": 89
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Dashboard stats retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Token missing or invalid"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/users/{userId}/role": {
+      "put": {
+        "summary": "Change user role",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Change a user's role. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the user to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["role"],
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "enum": ["admin", "student", "instructor"],
+                    "example": "instructor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User role updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid role or missing user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/users/{userId}/deactivate": {
+      "patch": {
+        "summary": "Deactivate user (soft delete)",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Soft delete a user account. The user can be restored later. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the user to deactivate"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deactivated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "User deactivated successfully"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User deactivated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/users/{userId}": {
+      "delete": {
+        "summary": "Permanently delete user",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Permanently delete a user account. This action cannot be undone. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the user to delete permanently"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User permanently deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "User permanently deleted"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User permanently deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/diary": {
+      "get": {
+        "summary": "Get all diary entries",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get all diary entries with optional user filtering. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter diary entries by user ID (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary entries retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DiaryEntryWithUser"
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entries retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+
+    "/v1/admin/diary/{diaryId}": {
+      "get": {
+        "summary": "Get single diary entry",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get a specific diary entry by ID with user information. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the diary entry to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary entry retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DiaryEntryWithUser"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entry retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing diary ID"
+          },
+          "404": {
+            "description": "Diary entry not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete diary entry",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Permanently delete a diary entry. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "diaryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the diary entry to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diary entry deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Diary entry deleted successfully"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Diary entry deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing diary ID"
+          },
+          "404": {
+            "description": "Diary entry not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+    "/v1/leaderboard": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get leaderboard rankings",
+        "description": "Retrieve leaderboard rankings for mentees with various filters",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Leaderboard category",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["attendance", "course_progress", "projects_completed", "overall"],
+              "default": "overall"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "description": "Time period for rankings",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["week", "month", "all_time"],
+              "default": "all_time"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of entries to return",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leaderboard retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "Leaderboard retrieved successfully"},
+                    "data": {"$ref": "#/components/schemas/LeaderboardResponse"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          }
+        }
+      }
+    },
+    "/v1/leaderboard/my-ranking": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get current user's ranking",
+        "description": "Retrieve the authenticated user's position in the leaderboard",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Leaderboard category",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["attendance", "course_progress", "projects_completed", "overall"],
+              "default": "overall"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "description": "Time period for rankings",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["week", "month", "all_time"],
+              "default": "all_time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User ranking retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "User ranking retrieved successfully"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userRanking": {"$ref": "#/components/schemas/LeaderboardEntry"},
+                        "totalEntries": {"type": "integer", "example": 150}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "404": {
+            "description": "User not found in leaderboard"
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Benjamin"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Nkem"
+          },
+          "address": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "091887563333333"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["student", "admin"],
+            "example": "student"
+          },
+          "email": {
+            "type": "string",
+            "example": "benjaminnkemfrancis@gmail.com"
+          },
+          "school": {
+            "type": "string",
+            "example": "University of Lagos"
+          },
+          "profilePicture": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "bio": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "github": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "linkedin": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "twitter": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "website": {
+            "type": ["string", "null"],
+            "example": null
+          },
+          "dateOfBirth": {
+            "type": ["string", "null"],
+            "format": "date",
+            "example": null
+          },
+          "isVerified": {
+            "type": "boolean",
+            "example": true
+          },
+          "password": {
+            "type": "string",
+            "example": "$2b$10$akadNW9JHkWUBElcmQocOuhYhCRir2JAH0ox91RsvSW2zqn./0UB2"
+          },
+          "deletedAt": {
+            "type": ["string", "null"],
+            "format": "date-time",
+            "example": null
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-30T15:46:44.022Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-30T15:47:05.901Z"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error message"
+          }
+        }
+      },
+      "UpdateCourseDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "thumbnailUrl": { "type": "string", "format": "uri" },
+          "status": { "type": "string", "enum": ["draft", "published"] }
+        }
+      },
+      "CreateLessonDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "Lesson 1: Setting up" },
+          "content": {
+            "type": "string",
+            "example": "In this lesson, we will set up the development environment."
+          },
+          "videoUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/video.mp4"
+          },
+          "order": { "type": "integer", "example": 1 }
+        },
+        "required": ["title", "content"]
+      },
+      "UpdateLessonDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "videoUrl": { "type": "string", "format": "uri" },
+          "order": { "type": "integer" }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": { "type": "string", "nullable": true },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreateSessionDto": {
+        "type": "object",
+        "required": ["title", "category", "startTime"],
+        "properties": {
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": { "type": "string", "nullable": true }
+        }
+      },
+      "UpdateSessionDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["API Building", "UI/UX Design", "Design Workshop"]
+          },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": { "type": "string", "format": "date-time" },
+          "description": { "type": "string" }
+        }
+      },
+      "DiaryEntryWithUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d1e2f3a4-b5c6-4789-a012-b3c4d5e6f789"
+          },
+          "title": {
+            "type": "string",
+            "example": "My Learning Journey"
+          },
+          "whatWorkOn": {
+            "type": "string",
+            "example": "Working on React hooks and state management"
+          },
+          "whatLearned": {
+            "type": "string",
+            "example": "Learned about useState and useEffect hooks"
+          },
+          "whatCouldBeBetter": {
+            "type": "string",
+            "example": "Could improve understanding of useContext"
+          },
+          "howItFeels": {
+            "type": "string",
+            "example": "Feeling confident about the progress made"
+          },
+          "goalsForNextTime": {
+            "type": "string",
+            "example": "Focus on learning useReducer and custom hooks"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+              },
+              "firstName": {
+                "type": "string",
+                "example": "John"
+              },
+              "lastName": {
+                "type": "string",
+                "example": "Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "john.doe@example.com"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      },
+      "LeaderboardResponse": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["attendance", "course_progress", "projects_completed", "overall"],
+            "example": "overall"
+          },
+          "period": {
+            "type": "string",
+            "enum": ["week", "month", "all_time"],
+            "example": "all_time"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LeaderboardEntry"
+            }
+          },
+          "totalEntries": {
+            "type": "integer",
+            "example": 45
+          }
+        }
+      },
+      "LeaderboardEntry": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c0ae1270-d291-4546-82bd-18701cbe2dd8"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "profilePicture": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/avatar.jpg"
+          },
+          "score": {
+            "type": "number",
+            "example": 85
+          },
+          "rank": {
+            "type": "integer",
+            "example": 3
+          },
+          "previousRank": {
+            "type": "integer",
+            "nullable": true,
+            "example": 5,
+            "description": "Previous rank for comparison (null if no previous data)"
+          },
+          "rankChange": {
+            "type": "integer",
+            "nullable": true,
+            "example": 2,
+            "description": "Rank change from previous period (positive = improvement, negative = decline)"
+          },
+          "attendanceSessions": {
+            "type": "integer",
+            "example": 12,
+            "description": "Number of sessions attended"
+          },
+          "courseProgress": {
+            "type": "number",
+            "example": 8,
+            "description": "Course progress score"
+          },
+          "projectsCompleted": {
+            "type": "integer",
+            "example": 5,
+            "description": "Number of completed projects/tasks"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Utility",
+      "description": "Miscellaneous endpoints"
+    },
+    {
+      "name": "Admin",
+      "description": "Administrative endpoints for managing users, diary entries, and system statistics. Requires admin privileges."
+    },
+    {
+      "name": "Leaderboard",
+      "description": "Leaderboard endpoints for mentee rankings and statistics. Includes attendance, course progress, projects completed, and overall rankings."
+    }
+  ]
+}
