@@ -16,13 +16,14 @@ const envSchema = Joi.object({
   JWT_REFRESH_EXPIRES_IN: Joi.string().default("30d"),
 
   // database
+  DATABASE_TYPE: Joi.string().valid("postgres", "sqlite").default("sqlite"),
   DATABASE_HOST: Joi.string().default("localhost"),
   DATABASE_PORT: Joi.number().default(5432),
   DATABASE_USER: Joi.string().default("postgres"),
   DATABASE_PASSWORD: Joi.string().default("your_password"),
   DATABASE_NAME: Joi.string().default("your_db"),
   DATABASE_SYNCHRONIZE: Joi.boolean().default(true),
-
+  DATABASE_SSL: Joi.boolean().default(false),   // 👈 added
   // email
   EMAIL_HOST: Joi.string().default("smtp.gmail.com"),
   EMAIL_PORT: Joi.number().default(587),
@@ -44,12 +45,15 @@ export const config = {
   nodeEnv: value.NODE_ENV,
   port: value.PORT,
   database: {
+    type: value.DATABASE_TYPE,
     host: value.DATABASE_HOST,
     port: value.DATABASE_PORT,
     user: value.DATABASE_USER,
     password: value.DATABASE_PASSWORD,
     name: value.DATABASE_NAME,
+    database: value.DATABASE_NAME, // For SQLite compatibility
     synchronize: Boolean(value.DATABASE_SYNCHRONIZE),
+    ssl: value.DATABASE_SSL ? { rejectUnauthorized: false } : false,  // 👈 FIXED here
   },
   jwt: {
     secret: value.JWT_SECRET,
@@ -68,3 +72,4 @@ export const config = {
     url: value.FRONTEND_URL,
   },
 } as const;
+

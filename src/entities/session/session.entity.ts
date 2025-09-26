@@ -53,8 +53,20 @@ export class Session {
   @Column({ type: "text", nullable: true })
   description?: string;
 
-  @ManyToOne(() => User, (user) => user.sessions, { onDelete: "CASCADE" })
-  user: User;
+  @Column({ default: "scheduled" })
+  status: string; // scheduled, in-progress, completed, cancelled
+
+  // The intern who booked the session
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  intern: User;
+
+  // The mentor who will conduct the session
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  mentor: User;
+
+  // For backward compatibility - will be deprecated
+  @ManyToOne(() => User, (user) => user.sessions, { onDelete: "CASCADE", nullable: true })
+  user?: User;
 
   @CreateDateColumn()
   createdAt: Date;

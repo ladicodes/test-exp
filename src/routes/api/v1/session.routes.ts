@@ -4,15 +4,18 @@ import {Session} from "../../../entities/session/session.entity";
 import {validateBody} from "../../../middleware/validate.middleware";
 import {CreateSessionDto} from "../../../entities/session/dto/create-session.dto";
 import {UpdateSessionDto} from "../../../entities/session/dto/update-session.dto";
+import {BookSessionDto} from "../../../entities/session/dto/book-session-validation.dto";
 import {authenticateAndAuthorize, instructorAuthMiddleware,} from "../../../middleware/auth.middleware";
 import {User, UserRole} from "../../../entities/user/user.entity";
 import {SessionController} from "../../../controllers/session/session.controller";
+import {emailService} from "../../../services/email.service";
 
 const router = express.Router();
 
 const sessionController = new SessionController(
     AppDataSource.getRepository(Session),
-    AppDataSource.getRepository(User)
+    AppDataSource.getRepository(User),
+    emailService
 );
 
 // Create a new session (Instructor only)
@@ -52,6 +55,26 @@ router.delete(
     sessionController.deleteSession.bind(sessionController)
 );
 
-//TODO: WIP
+// Book a session with a mentor (Students only)
+router.post(
+    "/book",
+    authenticateAndAuthorize(UserRole.STUDENT),
+    validateBody(BookSessionDto),
+    sessionController.bookSession.bind(sessionController)
+);
+
+// Get available mentors for booking (Authenticated users)
+router.get(
+    "/mentors/available",
+    authenticateAndAuthorize(),
+    sessionController.getAvailableMentors.bind(sessionController)
+);
+
+// Get my sessions (both for students and instructors)
+router.get(
+    "/my-sessions",
+    authenticateAndAuthorize(),
+    sessionController.getMySessions.bind(sessionController)
+);
 
 export default router;

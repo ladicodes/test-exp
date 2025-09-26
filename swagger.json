@@ -1017,6 +1017,101 @@
       }
     },
 
+    "/sessions/book": {
+      "post": {
+        "summary": "Book a session with a mentor",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Allows students to book a session with an instructor/mentor. Automatically sends email notifications to both the student and mentor.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BookSessionDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session booked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": { "$ref": "#/components/schemas/SessionWithMentorIntern" },
+                    "message": { "type": "string", "example": "Session booked successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Validation error or scheduling conflict" },
+          "401": { "description": "Unauthorized - Student access required" },
+          "404": { "description": "Mentor not found" }
+        }
+      }
+    },
+    "/sessions/mentors/available": {
+      "get": {
+        "summary": "Get available mentors for booking",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Retrieve a list of all available mentors/instructors that students can book sessions with.",
+        "responses": {
+          "200": {
+            "description": "Available mentors fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/MentorProfile" }
+                    },
+                    "message": { "type": "string", "example": "Available mentors fetched successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/sessions/my-sessions": {
+      "get": {
+        "summary": "Get my sessions",
+        "tags": ["Sessions"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get sessions for the authenticated user. For students: sessions they booked. For mentors: sessions booked with them.",
+        "responses": {
+          "200": {
+            "description": "Sessions fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SessionWithMentorIntern" }
+                    },
+                    "message": { "type": "string", "example": "Sessions fetched successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+
     "/v1/admin/dashboard": {
       "get": {
         "summary": "Get admin dashboard stats",
@@ -1853,6 +1948,101 @@
             "type": "integer",
             "example": 45
           }
+        }
+      },
+      "BookSessionDto": {
+        "type": "object",
+        "required": ["mentorId", "title", "category", "startTime"],
+        "properties": {
+          "mentorId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the mentor to book the session with",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the session",
+            "example": "React Hooks Deep Dive"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "API Building", "UI/UX Design", "Design Workshop", "Frontend Development",
+              "Backend Development", "Fullstack Development", "DevOps", "Database Management",
+              "Data Science", "Machine Learning", "Cyber Security", "Cloud Computing",
+              "Mobile App Development", "Game Development", "Blockchain Technology",
+              "Software Testing", "IoT", "Networking", "Agile Methodologies"
+            ],
+            "description": "Category of the session",
+            "example": "Frontend Development"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start time of the session",
+            "example": "2025-09-27T14:00:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End time of the session (optional)",
+            "example": "2025-09-27T15:00:00Z"
+          },
+          "description": {
+            "type": "string",
+            "description": "Additional description for the session",
+            "example": "I would like to learn about React hooks, specifically useState and useEffect"
+          }
+        }
+      },
+      "SessionWithMentorIntern": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string", "example": "React Hooks Deep Dive" },
+          "category": { "type": "string", "example": "Frontend Development" },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": { "type": "string", "format": "date-time", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "status": { "type": "string", "example": "scheduled" },
+          "intern": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "firstName": { "type": "string" },
+              "lastName": { "type": "string" },
+              "email": { "type": "string", "format": "email" }
+            }
+          },
+          "mentor": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "firstName": { "type": "string" },
+              "lastName": { "type": "string" },
+              "email": { "type": "string", "format": "email" }
+            }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "MentorProfile": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "firstName": { "type": "string", "example": "John" },
+          "lastName": { "type": "string", "example": "Doe" },
+          "email": { "type": "string", "format": "email", "example": "john.doe@example.com" },
+          "profilePicture": { "type": "string", "nullable": true, "example": null },
+          "bio": { "type": "string", "nullable": true, "example": "Senior Full Stack Developer with 5+ years experience" },
+          "skills": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["React", "Node.js", "TypeScript", "PostgreSQL"]
+          },
+          "mainStack": { "type": "string", "nullable": true, "example": "Full Stack Developer" }
         }
       },
       "LeaderboardEntry": {
