@@ -23,6 +23,7 @@ router.get("/dashboard", authenticateAndAuthorize(UserRole.ADMIN), adminControll
 router.put("/users/:userId/role", authenticateAndAuthorize(UserRole.ADMIN), adminController.changeUserRole.bind(adminController));
 router.patch("/users/:userId/deactivate", authenticateAndAuthorize(UserRole.ADMIN), adminController.deactivateUser.bind(adminController));
 router.delete("/users/:userId", authenticateAndAuthorize(UserRole.ADMIN), adminController.permanentlyDeleteUser.bind(adminController));
+router.post("/mentor-assignment", authenticateAndAuthorize(UserRole.ADMIN), adminController.assignMentorToMentee.bind(adminController));
 
 // Diary management routes
 router.get("/diary", authenticateAndAuthorize(UserRole.ADMIN), adminController.getAllDiaryEntries.bind(adminController));

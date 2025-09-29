@@ -94,6 +94,33 @@ export class AdminController {
         }
     }
 
+    async assignMentorToMentee(req: Request, res: Response) {
+        try {
+            const { menteeId, mentorId } = req.body;
+
+            if (!menteeId || !mentorId) {
+                return ResponseUtil.error(res, "Both menteeId and mentorId are required", 400);
+            }
+
+            const result = await this.adminService.assignMentorToMentee(menteeId, mentorId);
+            return ResponseUtil.success(res, result, "Mentor assigned to mentee successfully");
+        } catch (error) {
+            console.error("Error assigning mentor to mentee:", error);
+            if (error instanceof Error) {
+                const errorMessage = error.message;
+                if (errorMessage === "Mentee not found" || errorMessage === "Mentor not found") {
+                    return ResponseUtil.error(res, errorMessage, 404);
+                }
+                if (errorMessage === "Mentee must be a student" ||
+                    errorMessage === "Mentor must be an instructor" ||
+                    errorMessage === "A user cannot be their own mentor") {
+                    return ResponseUtil.error(res, errorMessage, 400);
+                }
+            }
+            return ResponseUtil.error(res, "Internal server error", 500);
+        }
+    }
+
     async getAllDiaryEntries(req: Request, res: Response) {
         try {
             const { userId } = req.query;

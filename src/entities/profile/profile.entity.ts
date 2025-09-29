@@ -53,6 +53,9 @@ export class Profile {
   @Column({ nullable: true })
   activity_done: string;
 
+  @Column({ nullable: true })
+  mentorship_sessions_attended: string;
+
   @CreateDateColumn()
   created_at: Date;
 
