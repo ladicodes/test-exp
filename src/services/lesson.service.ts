@@ -30,7 +30,7 @@ export class LessonService {
 
     const lesson = this.lessonRepository.create({
       ...body,
-      course,
+      // course,
     });
 
     return await this.lessonRepository.save(lesson);
@@ -38,7 +38,8 @@ export class LessonService {
 
   async getLessons(courseId: string) {
     return await this.lessonRepository.find({
-      where: { course: { id: courseId } },
+      // where: { course: { id: courseId } },
+
       relations: ["course"],
       order: { order: "ASC" },
     });

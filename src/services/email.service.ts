@@ -238,7 +238,7 @@ export const emailServiceMiddleware = (emailService: EmailService) => {
 export const emailConfig: EmailConfig = {
   host: config.email.host || "smtp.gmail.com",
   port: config.email.port || 587,
-  secure: config.email.secure || false,
+  secure: config.email.secure || true,
   auth: {
     user: config.email.user,
     pass: config.email.pass,
