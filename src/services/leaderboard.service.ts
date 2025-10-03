@@ -3,7 +3,6 @@ import { User, UserRole } from "../entities/user/user.entity";
 import { Session } from "../entities/session/session.entity";
 import { Task, TaskStatus } from "../entities/tasks/task.entity";
 import { Course } from "../entities/course/course.entity";
-import { Lesson } from "../entities/course/lesson.entity";
 
 export enum LeaderboardPeriod {
     WEEK = "week",
@@ -44,20 +43,17 @@ export class LeaderboardService {
     private readonly sessionRepository: Repository<Session>;
     private readonly taskRepository: Repository<Task>;
     private readonly courseRepository: Repository<Course>;
-    private readonly lessonRepository: Repository<Lesson>;
 
     constructor(
         userRepository: Repository<User>,
         sessionRepository: Repository<Session>,
         taskRepository: Repository<Task>,
         courseRepository: Repository<Course>,
-        lessonRepository: Repository<Lesson>
     ) {
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.taskRepository = taskRepository;
         this.courseRepository = courseRepository;
-        this.lessonRepository = lessonRepository;
     }
 
     async getLeaderboard(
@@ -149,7 +145,6 @@ export class LeaderboardService {
         previousStartDate: Date | null
     ): Promise<LeaderboardEntry[]> {
         const entries: LeaderboardEntry[] = [];
-        const totalLessons = await this.lessonRepository.count();
 
         for (const mentee of mentees) {
             // For now, we'll calculate course progress based on completed tasks

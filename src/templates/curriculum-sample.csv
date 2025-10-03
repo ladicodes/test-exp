@@ -1,0 +1,5 @@
+curriculumTitle,curriculumDescription,courseTitle,courseDescription,endDate,videoUrl,lessonType,instructorEmail
+Frontend Development - Beginner,Learn the basics of frontend development,HTML Fundamentals,Learn HTML basics and structure,2024-12-31,https://example.com/video1,Live Class,instructor@example.com
+Frontend Development - Beginner,Learn the basics of frontend development,CSS Styling,Master CSS styling techniques,2024-12-31,,Virtual Class,
+Backend Development - Beginner,Introduction to backend development,Node.js Basics,Learn Node.js fundamentals,2024-12-31,https://example.com/video2,Pre-recorded,instructor2@example.com
+Backend Development - Beginner,Introduction to backend development,Express.js Framework,Build REST APIs with Express,2024-12-31,,Virtual Workshop,

@@ -1439,6 +1439,249 @@
         }
       }
     },
+
+    "/v1/admin/curriculum": {
+      "post": {
+        "summary": "Create curriculum",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Create a new curriculum. Only accessible by admin users.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCurriculumDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Curriculum created successfully" },
+          "400": { "description": "Validation error" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      },
+      "get": {
+        "summary": "Get all curriculums",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get all curriculums with their courses. Only accessible by admin users.",
+        "responses": {
+          "200": { "description": "Curriculums retrieved successfully" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      }
+    },
+
+    "/v1/admin/curriculum/{id}": {
+      "get": {
+        "summary": "Get curriculum by ID",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Get a specific curriculum by ID. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Curriculum retrieved successfully" },
+          "404": { "description": "Curriculum not found" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      },
+      "put": {
+        "summary": "Update curriculum",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Update a curriculum. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCurriculumDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Curriculum updated successfully" },
+          "404": { "description": "Curriculum not found" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      },
+      "delete": {
+        "summary": "Delete curriculum",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Delete a curriculum. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Curriculum deleted successfully" },
+          "404": { "description": "Curriculum not found" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      }
+    },
+
+    "/v1/admin/course": {
+      "post": {
+        "summary": "Create course",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Create a new course within a curriculum. Only accessible by admin users.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCourseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Course created successfully" },
+          "400": { "description": "Validation error" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      }
+    },
+
+    "/v1/admin/course/{id}": {
+      "put": {
+        "summary": "Update course",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Update a course. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCourseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Course updated successfully" },
+          "404": { "description": "Course not found" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      },
+      "delete": {
+        "summary": "Delete course",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Delete a course. Only accessible by admin users.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Course deleted successfully" },
+          "404": { "description": "Course not found" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      }
+    },
+
+    "/v1/admin/curriculum/import-csv": {
+      "post": {
+        "summary": "Import curriculum and courses from CSV",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Bulk import curriculums and courses from a CSV file. Only accessible by admin users.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "csvFile": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "CSV file containing curriculum and course data"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "CSV import successful" },
+          "400": { "description": "Invalid CSV file or validation errors" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      }
+    },
+
+    "/v1/admin/curriculum/sample-csv": {
+      "get": {
+        "summary": "Download sample CSV template",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "description": "Download a sample CSV template for curriculum import. Only accessible by admin users.",
+        "responses": {
+          "200": {
+            "description": "Sample CSV file",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden - Admin access required" }
+        }
+      }
+    },
     "/v1/leaderboard": {
       "get": {
         "tags": ["Leaderboard"],
@@ -1564,6 +1807,204 @@
           "404": {
             "description": "User not found in leaderboard"
           }
+        }
+      }
+    },
+
+    "/v1/proficiency/submit": {
+      "post": {
+        "tags": ["Proficiency"],
+        "summary": "Submit proficiency test",
+        "description": "Submit proficiency test scores and get assigned curriculums based on skill levels",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitProficiencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Proficiency test submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "Proficiency test submitted successfully and curriculums assigned"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "proficiencyTest": {"$ref": "#/components/schemas/ProficiencyTest"},
+                        "assignedCurriculums": {
+                          "type": "array",
+                          "items": {"$ref": "#/components/schemas/AssignedCurriculum"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+
+    "/v1/proficiency/assigned-curriculums": {
+      "get": {
+        "tags": ["Proficiency"],
+        "summary": "Get assigned curriculums",
+        "description": "Get curriculums assigned to user based on proficiency test",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Assigned curriculums retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "Assigned curriculums retrieved successfully"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/AssignedCurriculum"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+
+    "/v1/proficiency/tests": {
+      "get": {
+        "tags": ["Proficiency"],
+        "summary": "Get proficiency test history",
+        "description": "Get user's proficiency test history",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Proficiency tests retrieved successfully"
+          },
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+
+    "/v1/course-progress/mark-done": {
+      "post": {
+        "tags": ["Course Progress"],
+        "summary": "Mark course as completed",
+        "description": "Mark a course as completed in user's curriculum progress",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkCourseDoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Course marked as completed"},
+          "400": {"description": "Invalid course ID or course not found"},
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+
+    "/v1/course-progress/mark-undone": {
+      "post": {
+        "tags": ["Course Progress"],
+        "summary": "Mark course as incomplete",
+        "description": "Mark a course as incomplete",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkCourseDoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Course marked as incomplete"},
+          "400": {"description": "Course progress not found"},
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+
+    "/v1/course-progress": {
+      "get": {
+        "tags": ["Course Progress"],
+        "summary": "Get user course progress",
+        "description": "Get user's course completion progress, optionally filtered by curriculum",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "curriculumId",
+            "in": "query",
+            "required": false,
+            "schema": {"type": "string", "format": "uuid"},
+            "description": "Filter by curriculum ID"
+          }
+        ],
+        "responses": {
+          "200": {"description": "User course progress retrieved successfully"},
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+
+    "/v1/course-progress/curriculum/{curriculumId}": {
+      "get": {
+        "tags": ["Course Progress"],
+        "summary": "Get curriculum progress",
+        "description": "Get detailed progress for a specific curriculum including completion percentage",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "curriculumId",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string", "format": "uuid"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Curriculum progress retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "Curriculum progress retrieved successfully"},
+                    "data": {"$ref": "#/components/schemas/CurriculumProgress"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {"description": "Invalid curriculum ID"},
+          "401": {"description": "Unauthorized"}
         }
       }
     }
@@ -1910,6 +2351,238 @@
             "type": "integer",
             "example": 5,
             "description": "Number of completed projects/tasks"
+          }
+        }
+      },
+      "CreateCurriculumDto": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "enum": [
+              "Frontend Development - Beginner",
+              "Frontend Development - Intermediate",
+              "Frontend Development - Advanced",
+              "Backend Development - Beginner",
+              "Backend Development - Intermediate",
+              "Backend Development - Advanced",
+              "Fullstack Development - Beginner",
+              "Fullstack Development - Intermediate",
+              "Fullstack Development - Advanced",
+              "UI/UX Design - Beginner",
+              "UI/UX Design - Intermediate",
+              "UI/UX Design - Advanced",
+              "Data Science - Beginner",
+              "Data Science - Intermediate",
+              "Data Science - Advanced",
+              "Machine Learning - Beginner",
+              "Machine Learning - Intermediate",
+              "Machine Learning - Advanced",
+              "Cyber Security - Beginner",
+              "Cyber Security - Intermediate",
+              "Cyber Security - Advanced",
+              "Cloud Computing - Beginner",
+              "Cloud Computing - Intermediate",
+              "Cloud Computing - Advanced",
+              "Mobile App Development - Beginner",
+              "Mobile App Development - Intermediate",
+              "Mobile App Development - Advanced",
+              "DevOps - Beginner",
+              "DevOps - Intermediate",
+              "DevOps - Advanced"
+            ],
+            "example": "Frontend Development - Beginner"
+          },
+          "description": {
+            "type": "string",
+            "example": "Learn the fundamentals of frontend web development"
+          }
+        }
+      },
+      "UpdateCurriculumDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "enum": [
+              "Frontend Development - Beginner",
+              "Frontend Development - Intermediate",
+              "Frontend Development - Advanced",
+              "Backend Development - Beginner",
+              "Backend Development - Intermediate",
+              "Backend Development - Advanced",
+              "Fullstack Development - Beginner",
+              "Fullstack Development - Intermediate",
+              "Fullstack Development - Advanced",
+              "UI/UX Design - Beginner",
+              "UI/UX Design - Intermediate",
+              "UI/UX Design - Advanced",
+              "Data Science - Beginner",
+              "Data Science - Intermediate",
+              "Data Science - Advanced",
+              "Machine Learning - Beginner",
+              "Machine Learning - Intermediate",
+              "Machine Learning - Advanced",
+              "Cyber Security - Beginner",
+              "Cyber Security - Intermediate",
+              "Cyber Security - Advanced",
+              "Cloud Computing - Beginner",
+              "Cloud Computing - Intermediate",
+              "Cloud Computing - Advanced",
+              "Mobile App Development - Beginner",
+              "Mobile App Development - Intermediate",
+              "Mobile App Development - Advanced",
+              "DevOps - Beginner",
+              "DevOps - Intermediate",
+              "DevOps - Advanced"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateCourseDto": {
+        "type": "object",
+        "required": ["title", "description", "endDate", "lessonType", "curriculumId"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Introduction to HTML"
+          },
+          "description": {
+            "type": "string",
+            "example": "Learn the basics of HTML markup"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-31T23:59:59Z"
+          },
+          "videoUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/video.mp4"
+          },
+          "lessonType": {
+            "type": "string",
+            "enum": ["Live Class", "Virtual Workshop", "Virtual Class", "Pre-recorded"],
+            "example": "Live Class"
+          },
+          "curriculumId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+          },
+          "instructorId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "b2c3d4e5-f6a7-4890-b123-c4d5e6f7a890"
+          }
+        }
+      },
+      "SubmitProficiencyDto": {
+        "type": "object",
+        "required": ["backendScore", "frontendScore", "qaScore", "uiUxScore", "dataScienceScore"],
+        "properties": {
+          "backendScore": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "frontendScore": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 4
+          },
+          "qaScore": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 2
+          },
+          "uiUxScore": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 5
+          },
+          "dataScienceScore": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          }
+        }
+      },
+      "ProficiencyTest": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "userId": {"type": "string", "format": "uuid"},
+          "backendScore": {"type": "integer", "example": 3},
+          "frontendScore": {"type": "integer", "example": 4},
+          "qaScore": {"type": "integer", "example": 2},
+          "uiUxScore": {"type": "integer", "example": 5},
+          "dataScienceScore": {"type": "integer", "example": 3},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "AssignedCurriculum": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "userId": {"type": "string", "format": "uuid"},
+          "curriculumId": {"type": "string", "format": "uuid"},
+          "techStack": {
+            "type": "string",
+            "enum": ["backend", "frontend", "qa", "ui/ux", "data_science"],
+            "example": "frontend"
+          },
+          "score": {"type": "integer", "example": 4},
+          "level": {
+            "type": "string",
+            "enum": ["beginner", "intermediate"],
+            "example": "intermediate"
+          },
+          "curriculum": {"type": "object"},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "MarkCourseDoneDto": {
+        "type": "object",
+        "required": ["courseId"],
+        "properties": {
+          "courseId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789"
+          }
+        }
+      },
+      "CurriculumProgress": {
+        "type": "object",
+        "properties": {
+          "curriculumId": {"type": "string", "format": "uuid"},
+          "totalCourses": {"type": "integer", "example": 10},
+          "completedCourses": {"type": "integer", "example": 6},
+          "progressPercentage": {"type": "integer", "example": 60},
+          "courses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string", "format": "uuid"},
+                "title": {"type": "string"},
+                "description": {"type": "string"},
+                "isCompleted": {"type": "boolean"}
+              }
+            }
           }
         }
       }

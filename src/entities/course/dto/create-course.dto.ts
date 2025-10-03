@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString, IsIn, IsUrl } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsUrl, IsDateString, IsEnum, IsUUID } from "class-validator";
+import { LessonType } from "../course.entity";
 
 export class CreateCourseDto {
   @IsString()
@@ -9,11 +10,23 @@ export class CreateCourseDto {
   @IsNotEmpty()
   description: string;
 
-  @IsOptional()
-  @IsUrl()
-  thumbnailUrl?: string;
+  @IsDateString()
+  @IsNotEmpty()
+  endDate: Date;
 
   @IsOptional()
-  @IsIn(["draft", "published"])
-  status?: "draft" | "published";
+  @IsUrl()
+  videoUrl?: string;
+
+  @IsEnum(LessonType)
+  @IsNotEmpty()
+  lessonType: LessonType;
+
+  @IsOptional()
+  @IsUUID()
+  instructorId?: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  curriculumId: string;
 }
