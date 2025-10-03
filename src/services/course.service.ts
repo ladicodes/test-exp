@@ -1,31 +1,48 @@
 import { Repository } from "typeorm";
-import { Course } from "../entities/course/course.entity";
-import { User } from "../entities/user/user.entity";
+import { Course, Curriculum } from "../entities/course/course.entity";
+import { User, UserRole } from "../entities/user/user.entity";
 import { CreateCourseDto } from "../entities/course/dto/create-course.dto";
 import { UpdateCourseDto } from "../entities/course/dto/update-course.dto";
 
 export class CourseService {
   private readonly courseRepository: Repository<Course>;
+  private readonly curriculumRepository: Repository<Curriculum>;
   private readonly userRepository: Repository<User>;
 
   constructor(
     courseRepository: Repository<Course>,
+    curriculumRepository: Repository<Curriculum>,
     userRepository: Repository<User>
   ) {
     this.courseRepository = courseRepository;
+    this.curriculumRepository = curriculumRepository;
     this.userRepository = userRepository;
   }
 
-  async createCourse({ body, user }: { user?: User; body: CreateCourseDto }) {
-    if (!user) throw new Error("Unauthorized");
-
-    const instructor = await this.userRepository.findOne({
-      where: { id: user.id },
+  async createCourse(body: CreateCourseDto) {
+    const curriculum = await this.curriculumRepository.findOne({
+      where: { id: body.curriculumId },
     });
-    if (!instructor) throw new Error("Instructor not found");
+    if (!curriculum) throw new Error("Curriculum not found");
+
+    let instructor = undefined;
+    if (body.instructorId) {
+      instructor = await this.userRepository.findOne({
+        where: { id: body.instructorId },
+      });
+      if (!instructor) throw new Error("Instructor not found");
+      if (instructor.role !== UserRole.INSTRUCTOR && instructor.role !== UserRole.ADMIN) {
+        throw new Error("User must have instructor or admin role");
+      }
+    }
 
     const course = this.courseRepository.create({
-      ...body,
+      title: body.title,
+      description: body.description,
+      endDate: body.endDate,
+      videoUrl: body.videoUrl,
+      lessonType: body.lessonType,
+      curriculum,
       instructor,
     });
 
@@ -34,14 +51,14 @@ export class CourseService {
 
   async getCourses() {
     return await this.courseRepository.find({
-      relations: ["instructor", "lessons"],
+      relations: ["instructor", "curriculum"],
     });
   }
 
   async getCourseById(courseId: string) {
     const course = await this.courseRepository.findOne({
       where: { id: courseId },
-      relations: ["instructor", "lessons"],
+      relations: ["instructor", "curriculum"],
     });
     if (!course) throw new Error("Course not found");
     return course;
@@ -53,7 +70,38 @@ export class CourseService {
     });
     if (!course) throw new Error("Course not found");
 
-    Object.assign(course, body);
+    if (body.curriculumId) {
+      const curriculum = await this.curriculumRepository.findOne({
+        where: { id: body.curriculumId },
+      });
+      if (!curriculum) throw new Error("Curriculum not found");
+      course.curriculum = curriculum;
+    }
+
+    if (body.instructorId !== undefined) {
+      if (body.instructorId === null || body.instructorId === '') {
+        // Remove instructor
+        course.instructor = undefined;
+      } else {
+        const instructor = await this.userRepository.findOne({
+          where: { id: body.instructorId },
+        });
+        if (!instructor) throw new Error("Instructor not found");
+        if (instructor.role !== UserRole.INSTRUCTOR && instructor.role !== UserRole.ADMIN) {
+          throw new Error("User must have instructor or admin role");
+        }
+        course.instructor = instructor;
+      }
+    }
+
+    Object.assign(course, {
+      title: body.title ?? course.title,
+      description: body.description ?? course.description,
+      endDate: body.endDate ?? course.endDate,
+      videoUrl: body.videoUrl ?? course.videoUrl,
+      lessonType: body.lessonType ?? course.lessonType,
+    });
+
     return await this.courseRepository.save(course);
   }
 

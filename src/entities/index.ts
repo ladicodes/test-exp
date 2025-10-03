@@ -4,7 +4,8 @@ import { Diary } from "./diary/diary.entity";
 import { Task } from "./tasks/task.entity";
 import { Profile } from "./profile/profile.entity";
 import { Session } from "./session/session.entity";
-import { Course } from "./course/course.entity";
-import { Lesson } from "./course/lesson.entity";
+import { Course, Curriculum } from "./course/course.entity";
+import { ProficiencyTest, AssignedCurriculum } from "./proficiency/proficiency.entity";
+import { CourseProgress } from "./course-progress/course-progress.entity";
 
-export default [User, Otp, Diary, Task, Profile, Session, Course, Lesson];
+export default [User, Otp, Diary, Task, Profile, Session, Course, Curriculum, ProficiencyTest, AssignedCurriculum, CourseProgress];

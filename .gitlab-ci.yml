@@ -1,0 +1,26 @@
+stages:
+  - build
+
+variables:
+  AWS_DEFAULT_REGION: eu-west-2
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  ECR_REPOSITORY_URI: 843987576375.dkr.ecr.eu-west-2.amazonaws.com/squadhackademy
+  AWS_REGION: eu-west-2
+
+build:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  before_script:
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_INTERNSHIP && export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_INTERNSHIP
+    - apk add --no-cache python3 py3-pip aws-cli
+    #- awecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
+    - aws ecr get-login-password --region $AWS_DEFAULT_REGION  | docker login --username AWS --password-stdin 843987576375.dkr.ecr.eu-west-2.amazonaws.com
+  script:
+    - docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG .
+    - docker tag $ECR_REPOSITORY_URI:$IMAGE_TAG $ECR_REPOSITORY_URI:latest
+    - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
+    - docker push $ECR_REPOSITORY_URI:latest
+  only:
+    - master
