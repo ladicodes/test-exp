@@ -5,6 +5,7 @@ variables:
   AWS_DEFAULT_REGION: eu-west-2
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
   ECR_REPOSITORY_URI: 843987576375.dkr.ecr.eu-west-2.amazonaws.com/squadhackademy
+  AWS_REGION: eu-west-2
 
 build:
   stage: build
