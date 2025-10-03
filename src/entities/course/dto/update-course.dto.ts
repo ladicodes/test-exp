@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsIn, IsUrl } from "class-validator";
+import { IsOptional, IsString, IsUrl, IsDateString, IsEnum, IsUUID } from "class-validator";
+import { LessonType } from "../course.entity";
 
 export class UpdateCourseDto {
   @IsOptional()
@@ -10,10 +11,22 @@ export class UpdateCourseDto {
   description?: string;
 
   @IsOptional()
-  @IsUrl()
-  thumbnailUrl?: string;
+  @IsDateString()
+  endDate?: Date;
 
   @IsOptional()
-  @IsIn(["draft", "published"])
-  status?: "draft" | "published";
+  @IsUrl()
+  videoUrl?: string;
+
+  @IsOptional()
+  @IsEnum(LessonType)
+  lessonType?: LessonType;
+
+  @IsOptional()
+  @IsUUID()
+  instructorId?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  curriculumId?: string;
 }

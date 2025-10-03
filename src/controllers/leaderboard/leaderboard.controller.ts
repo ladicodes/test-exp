@@ -6,7 +6,6 @@ import { User } from "../../entities/user/user.entity";
 import { Session } from "../../entities/session/session.entity";
 import { Task } from "../../entities/tasks/task.entity";
 import { Course } from "../../entities/course/course.entity";
-import { Lesson } from "../../entities/course/lesson.entity";
 
 export class LeaderboardController {
     private readonly leaderboardService: LeaderboardService;
@@ -16,14 +15,12 @@ export class LeaderboardController {
         sessionRepository: Repository<Session>,
         taskRepository: Repository<Task>,
         courseRepository: Repository<Course>,
-        lessonRepository: Repository<Lesson>
     ) {
         this.leaderboardService = new LeaderboardService(
             userRepository,
             sessionRepository,
             taskRepository,
             courseRepository,
-            lessonRepository
         );
     }
 
